@@ -6,7 +6,7 @@
 
     <FrameLayout
         android:id="@+id/list"
-        android:layout_width="350dp"
+        android:layout_width="600dp"
         android:layout_height="match_parent" />
 
     <FrameLayout
