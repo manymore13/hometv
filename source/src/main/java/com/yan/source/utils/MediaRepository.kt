@@ -22,7 +22,7 @@ class MediaRepository {
     }
 
     suspend fun getMediaSource(): MutableList<M3uEntry> {
-        val url = "https://live.fanmingming.com/tv/m3u/ipv6.m3u"
+        val url = "https://cdn.jsdelivr.net/gh/fanmingming/live@latest/tv/m3u/ipv6.m3u"
         val m3uFile = request(url)
         val m3uEntryList = M3uParser.parse(m3uFile)
         println("$m3uFile")

@@ -25,11 +25,13 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
 
     fun init() = viewModelScope.launch {
         val mapSource = getSource()
+        val oldLogoHost = "https://live.fanmingming.com/"
+        val newLogoHost = "https://cdn.jsdelivr.net/gh/fanmingming/live@latest/"
         val remoutSource = mapSource.map { m3uEntry ->
             MediaItem(
                 m3uEntry.title ?: "",
                 m3uEntry.location.toString(),
-                m3uEntry.metadata["tvg-logo"] ?: ""
+                m3uEntry.metadata["tvg-logo"]?.replace(oldLogoHost,newLogoHost) ?: ""
             )
         }.toMutableList()
         mediaList.clear()

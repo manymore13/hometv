@@ -49,7 +49,7 @@ class MediaAdapter(private val dataSet: MutableList<MediaItem>) :
         holder.curPos = position
         holder.mediaName?.text = mediaItem.mediaName
         holder.mediaIcon?.let {
-            Glide.with(holder.itemView.context).load(mediaItem.mediaUrl).into(it)
+            Glide.with(holder.itemView.context).load(mediaItem.iconUrl).into(it)
         }
     }
 

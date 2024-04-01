@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.yan.hometv.MediaViewModel
 import com.yan.hometv.R
 import com.yan.hometv.databinding.ActivityMainBinding
+import com.yan.hometv.utils.FragmentUtils
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,22 +21,33 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-        if(savedInstanceState == null){
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.content, mediaListFragment)
-                .addToBackStack("media_list")
-                .commit()
+
+        if (savedInstanceState == null) {
+            FragmentUtils.add(
+                supportFragmentManager,
+                mediaListFragment,
+                R.id.content,
+//                R.animator.slide_in_from_right,
+//                R.animator.slide_out_to_left,
+//                R.animator.slide_in_from_left,
+//                R.animator.slide_out_to_right
+            )
         }
 
         val mediaModel = ViewModelProvider(this)[MediaViewModel::class.java]
         mediaModel.selectMediaLiveData.observe(this) {
+            FragmentUtils.add(
+                supportFragmentManager,
+                mediaPlayerFragment,
+                R.id.content,
+                true,
+                R.anim.right_in,
+                R.anim.left_out,
+                R.anim.left_in,
+                R.anim.right_out
+            )
             mediaPlayerFragment.setVideoUrl(it.mediaUrl)
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.content, mediaPlayerFragment)
-                .addToBackStack("media_play")
-                .commit()
         }
 
 //        val videoUrl =
