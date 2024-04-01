@@ -18,6 +18,9 @@ import com.yan.hometv.databinding.MediaListBinding
 class MediaListFragment : Fragment() {
 
     private var mediaModel: MediaViewModel? = null
+    companion object{
+        const val TAG = "MediaListFragment"
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,

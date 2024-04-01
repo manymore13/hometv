@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">HomeTV</string>
-    <bool name="is_tv">false</bool>
+    <string name="is_tv">true</string>
 </resources>

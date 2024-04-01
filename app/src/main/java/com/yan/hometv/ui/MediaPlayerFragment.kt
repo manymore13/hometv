@@ -10,6 +10,7 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import com.yan.hometv.MediaPlayHelper
 import com.yan.hometv.databinding.MediaPlayerBinding
+import com.yan.hometv.utils.isTv
 
 class MediaPlayerFragment : Fragment() {
 
@@ -18,7 +19,7 @@ class MediaPlayerFragment : Fragment() {
     private var videoUrl: String? = null
 
     companion object{
-        const val TAG = "VideoPlayerFragment"
+        const val TAG = "MediaPlayerFragment"
     }
 
     @UnstableApi
@@ -29,7 +30,7 @@ class MediaPlayerFragment : Fragment() {
     ): View {
         binding = MediaPlayerBinding.inflate(inflater, container, false)
         binding.playerView.run {
-            useController = true
+            useController = !isTv()
         }
         mediaPlayHelper = getVideoPlayHelper()
         lifecycle.addObserver(mediaPlayHelper)
