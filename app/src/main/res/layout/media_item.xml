@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="3dp"
+    android:layout_margin="13dp"
     android:stateListAnimator="@animator/view_click_animator"
     android:foreground="?android:attr/selectableItemBackground"
     android:background="@drawable/selector_media_item"

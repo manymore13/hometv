@@ -1,12 +1,14 @@
 package com.yan.hometv.ui.helper
 
 import android.os.Bundle
+import android.view.View
 import androidx.annotation.CallSuper
 import androidx.annotation.IdRes
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import com.yan.hometv.MediaViewModel
 import com.yan.hometv.bean.MediaItem
+import com.yan.hometv.databinding.ActivityMainBinding
 import com.yan.hometv.ui.MediaListFragment
 import com.yan.hometv.ui.MediaPlayerFragment
 
@@ -17,8 +19,16 @@ abstract class MediaUiHelper(
 
     protected val mediaPlayerFragment = MediaPlayerFragment()
     protected val mediaListFragment = MediaListFragment()
-    private val mediaModel by lazy {
+
+    protected lateinit var binding: ActivityMainBinding
+
+    protected val mediaModel by lazy {
         ViewModelProvider(activity)[MediaViewModel::class.java]
+    }
+
+    override fun bindView(): View {
+        binding = ActivityMainBinding.inflate(activity.layoutInflater)
+        return binding.root
     }
 
     @CallSuper

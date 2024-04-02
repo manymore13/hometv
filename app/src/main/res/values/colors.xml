@@ -11,4 +11,6 @@
     <color name="colorPrimary">#3F51B5</color> <!-- 主题色 -->
     <color name="colorPrimaryDark">#303F9F</color> <!-- 状态栏颜色 -->
     <color name="colorAccent">#FF4081</color> <!-- 强调色 -->
+
+    <color name="media_play_bg">#33000000</color>
 </resources>

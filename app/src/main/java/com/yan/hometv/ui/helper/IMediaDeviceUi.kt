@@ -2,6 +2,7 @@ package com.yan.hometv.ui.helper
 
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.View
 import androidx.fragment.app.FragmentActivity
 import com.yan.hometv.bean.MediaItem
 import com.yan.hometv.utils.isW720
@@ -12,6 +13,9 @@ import com.yan.hometv.utils.isW720
  * @date 2024/4/2
  */
 interface IMediaDeviceUi {
+
+    fun bindView(): View
+
     /**
      * 初始化
      */

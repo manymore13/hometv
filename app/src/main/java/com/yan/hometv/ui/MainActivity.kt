@@ -14,16 +14,13 @@ import com.yan.hometv.utils.showFragment
 
 open class MainActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityMainBinding
-
     private val uiHelper: IMediaDeviceUi by lazy {
         IMediaDeviceUi.getMediaDevice(this, R.id.media_play, R.id.media_list)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(uiHelper.bindView())
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         uiHelper.onCreate(savedInstanceState)
     }

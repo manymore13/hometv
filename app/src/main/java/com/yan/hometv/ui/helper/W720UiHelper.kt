@@ -1,9 +1,14 @@
 package com.yan.hometv.ui.helper
 
 import android.os.Bundle
+import android.transition.TransitionManager
 import android.view.KeyEvent
+import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import com.yan.hometv.bean.MediaItem
+import com.yan.hometv.utils.hideFragment
+import com.yan.hometv.utils.showFragment
 
 /**
  * @author manymore13
@@ -17,8 +22,18 @@ class W720UiHelper(activity: FragmentActivity, mediaPlayResId: Int, mediaListRes
         super.onCreate(savedInstanceState)
 
         activity.supportFragmentManager.beginTransaction()
+            .hide(mediaListFragment)
             .show(mediaPlayerFragment)
             .commit()
+
+        mediaPlayerFragment.rootClick = View.OnClickListener {
+
+            TransitionManager.beginDelayedTransition(binding.mediaList)
+
+            binding.mediaList.isVisible = !binding.mediaList.isVisible
+
+            showFragment(activity.supportFragmentManager, mediaListFragment)
+        }
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
@@ -27,15 +42,17 @@ class W720UiHelper(activity: FragmentActivity, mediaPlayResId: Int, mediaListRes
 
     override fun onClickSelectMediaItem(mediaItem: MediaItem) {
         super.onClickSelectMediaItem(mediaItem)
-        TODO("Not yet implemented")
+        hideFragment(activity.supportFragmentManager, mediaListFragment)
     }
 
     override fun mediaSourceLoadedComplete() {
-        TODO("Not yet implemented")
+        if (mediaModel.mediaList.size > 0) {
+            mediaPlayerFragment.setMediaItem(mediaModel.mediaList[0])
+        }
     }
 
     override fun onBackReturn(): Boolean {
-        TODO("Not yet implemented")
+        return false
     }
 
 }

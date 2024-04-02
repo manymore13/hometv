@@ -23,6 +23,7 @@ class MediaPlayerFragment : Fragment() {
     private lateinit var binding: MediaPlayerBinding
     private lateinit var mediaPlayHelper: MediaPlayHelper
     private var videoUrl: String? = null
+    var rootClick: View.OnClickListener? = null
 
     companion object {
         const val delay = 1500L
@@ -44,7 +45,9 @@ class MediaPlayerFragment : Fragment() {
         if (videoUrl?.isNotEmpty() == true) {
             mediaPlayHelper.setVideoUrl(videoUrl!!)
         }
-
+        binding.root.setOnClickListener {
+            rootClick?.onClick(it)
+        }
         return binding.root
     }
 
