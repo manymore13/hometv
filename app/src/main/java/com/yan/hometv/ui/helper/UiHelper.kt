@@ -39,7 +39,6 @@ abstract class MediaUiHelper(
             fragmentManager.beginTransaction()
                 .replace(mediaListResId, mediaListFragment, MediaListFragment.TAG)
                 .replace(mediaPlayResId, mediaPlayerFragment, MediaPlayerFragment.TAG)
-                .hide(mediaPlayerFragment)
                 .commit()
         }
 

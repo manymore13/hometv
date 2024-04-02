@@ -23,7 +23,6 @@ class W720UiHelper(activity: FragmentActivity, mediaPlayResId: Int, mediaListRes
 
         activity.supportFragmentManager.beginTransaction()
             .hide(mediaListFragment)
-            .show(mediaPlayerFragment)
             .commit()
 
         mediaPlayerFragment.rootClick = View.OnClickListener {

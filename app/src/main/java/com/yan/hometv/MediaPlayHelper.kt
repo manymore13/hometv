@@ -41,6 +41,12 @@ class MediaPlayHelper(private var playerView: PlayerView, private val listener: 
         }
     }
 
+    fun prepare(){
+        if (::player.isInitialized) {
+            player.prepare()
+        }
+    }
+
     fun play() {
         if (::player.isInitialized) {
             player.play()
@@ -56,13 +62,6 @@ class MediaPlayHelper(private var playerView: PlayerView, private val listener: 
     override fun onCreate(owner: LifecycleOwner) {
         super.onCreate(owner)
         initPlayer()
-    }
-
-    override fun onResume(owner: LifecycleOwner) {
-        super.onResume(owner)
-        if (::player.isInitialized) {
-            player.play()
-        }
     }
 
     override fun onPause(owner: LifecycleOwner) {

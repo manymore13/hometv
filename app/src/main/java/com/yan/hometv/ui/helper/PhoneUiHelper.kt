@@ -18,6 +18,7 @@ class PhoneUiHelper(activity: FragmentActivity, mediaPlayResId: Int, mediaListRe
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        hideFragment(activity.supportFragmentManager, mediaPlayerFragment)
     }
 
     override fun onClickSelectMediaItem(mediaItem: MediaItem) {

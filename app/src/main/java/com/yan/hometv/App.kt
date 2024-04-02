@@ -1,6 +1,9 @@
 package com.yan.hometv
 
 import android.app.Application
+import android.content.IntentFilter
+import android.net.ConnectivityManager
+import com.yan.hometv.receiver.NetworkChangeReceiver
 
 class App : Application() {
 
@@ -16,5 +19,6 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        registerReceiver(NetworkChangeReceiver(), IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
     }
 }

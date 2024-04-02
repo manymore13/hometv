@@ -5,7 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:background="@drawable/shape_media_info"
-    android:padding="15dp">
+    android:padding="@dimen/media_item_padding">
 
     <ImageView
         android:id="@+id/media_icon"

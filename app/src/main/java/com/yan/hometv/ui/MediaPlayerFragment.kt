@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.yan.hometv.MediaPlayHelper
 import com.yan.hometv.bean.MediaItem
 import com.yan.hometv.databinding.MediaPlayerBinding
+import com.yan.hometv.receiver.NetWorkStatusReceiver
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -24,6 +25,7 @@ class MediaPlayerFragment : Fragment() {
     private lateinit var mediaPlayHelper: MediaPlayHelper
     private var videoUrl: String? = null
     var rootClick: View.OnClickListener? = null
+    private var canRetryConnect = false
 
     companion object {
         const val delay = 1500L
@@ -48,7 +50,19 @@ class MediaPlayerFragment : Fragment() {
         binding.root.setOnClickListener {
             rootClick?.onClick(it)
         }
+        lifecycle.addObserver(NetWorkStatusReceiver { isConnected ->
+            if (isConnected) {
+                mediaPlayHelper.prepare()
+            }
+        })
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (view?.isVisible == true) {
+            mediaPlayHelper.play()
+        }
     }
 
     fun setMediaItem(mediaItem: MediaItem) {
@@ -99,17 +113,23 @@ class MediaPlayerFragment : Fragment() {
                     Player.STATE_READY -> {
                         // 播放器准备好
                         mediaPlayHelper.play()
+                        canRetryConnect = true
                         Log.d(TAG, "STATE_READY")
                     }
 
                     Player.STATE_ENDED -> {
                         // 播放结束
                         Log.d(TAG, "STATE_ENDED")
+                        canRetryConnect = true
                     }
 
                     Player.STATE_IDLE -> {
                         // 播放器空闲
                         Log.d(TAG, "STATE_IDLE")
+                        if (canRetryConnect) {
+                            mediaPlayHelper.prepare()
+                            canRetryConnect = false
+                        }
                     }
                 }
             }
