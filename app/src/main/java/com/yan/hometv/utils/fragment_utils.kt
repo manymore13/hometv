@@ -10,7 +10,7 @@ fun showFragment(fragmentManager: FragmentManager, fragment: Fragment) {
             R.anim.right_in, R.anim.left_out,
             R.anim.left_in, R.anim.right_out
         ).show(fragment)
-        .addToBackStack("")
+        .addToBackStack(fragment.tag)
         .commit()
 }
 

@@ -2,6 +2,7 @@ package com.yan.hometv
 
 import android.content.Context
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.media3.common.MediaItem
@@ -17,6 +18,10 @@ class MediaPlayHelper(private var playerView: PlayerView, private val listener: 
 
     private var videoUrl: String? = null
 
+    companion object{
+        const val TAG = "MediaPlayHelper"
+    }
+
     private fun initPlayer(): Player {
         player = ExoPlayer.Builder(context)
             .build().apply {
@@ -31,6 +36,7 @@ class MediaPlayHelper(private var playerView: PlayerView, private val listener: 
         videoUrl = url
         if (::player.isInitialized) {
             player.setMediaItem(MediaItem.fromUri(Uri.parse(videoUrl)))
+            Log.d(TAG,"setVideoUrl playbackState =${player.playbackState}")
             player.prepare()
         }
     }
