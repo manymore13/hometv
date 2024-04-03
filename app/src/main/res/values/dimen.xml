@@ -5,7 +5,7 @@
 
     <integer name="config_shortAnimTime">200</integer>
     <dimen name="media_item_select_stroke_width">3dp</dimen>
-    <dimen name="media_item_margin">5dp</dimen>
+    <dimen name="media_item_margin">2dp</dimen>
 
     <dimen name="media_item_padding">5dp</dimen>
 </resources>

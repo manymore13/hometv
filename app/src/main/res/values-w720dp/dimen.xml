@@ -4,7 +4,7 @@
     <dimen name="media_name_text_size">35sp</dimen>
 
     <dimen name="media_item_select_stroke_width">8dp</dimen>
-    <dimen name="media_item_margin">12dp</dimen>
+    <dimen name="media_item_margin">8dp</dimen>
 
     <dimen name="media_item_padding">10dp</dimen>
 
