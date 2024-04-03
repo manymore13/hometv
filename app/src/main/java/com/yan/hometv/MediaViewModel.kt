@@ -21,8 +21,7 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     companion object {
-        const val mediaItemListCacheTime = "mediaListCacheTime"
-        const val mediaListCache = "mediaListCache"
+        const val TAG = "MediaViewModel"
     }
 
     fun init() = viewModelScope.launch {
@@ -39,7 +38,6 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
         mediaList.clear()
         mediaList.addAll(remoutSource ?: mutableListOf())
         complete.value = "complete"
-//        val mediaSourceMapData:MutableList<M3uEntry> =
     }
 
     private suspend fun getSource() = withContext(Dispatchers.IO) {

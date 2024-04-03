@@ -1,40 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_margin="@dimen/media_item_margin"
-    android:stateListAnimator="@animator/view_click_animator"
-    android:foreground="?android:attr/selectableItemBackground"
     android:background="@drawable/selector_media_item"
-    app:cardBackgroundColor="@color/colorPrimary"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="4dp">
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:stateListAnimator="@animator/view_click_animator">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <ImageView
+        android:id="@+id/media_icon"
+        tools:src="@drawable/ic_launcher_background"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_vertical" />
+
+    <TextView
+        android:id="@+id/media_name"
+        tools:text="Title"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp">
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="16dp"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
 
-        <ImageView
-            android:id="@+id/media_icon"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center_vertical"
-            tools:src="@drawable/ic_launcher_background" />
+</LinearLayout>
 
-        <TextView
-            android:id="@+id/media_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="16dp"
-            android:textColor="@color/white"
-            tools:text="Title"
-            android:textSize="16sp" />
-
-    </LinearLayout>
-
-</com.google.android.material.card.MaterialCardView>
