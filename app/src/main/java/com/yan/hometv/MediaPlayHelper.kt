@@ -1,82 +1,92 @@
 package com.yan.hometv
 
 import android.content.Context
-import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.DefaultLifecycleObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.media3.common.MediaItem
+import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.ui.PlayerView
+import com.yan.hometv.bean.toSysMediaItem
+import com.yan.hometv.ui.MediaPlayerFragment
 
-class MediaPlayHelper(private var playerView: PlayerView, private val listener: Player.Listener) :
+class MediaPlayHelper(private val context: Context, private val player: Player) :
     DefaultLifecycleObserver {
 
-    private val context: Context = playerView.context
-    private lateinit var player: ExoPlayer
+    private var canRetryConnect = false
 
-    private var videoUrl: String? = null
-
-    companion object{
+    companion object {
         const val TAG = "MediaPlayHelper"
     }
 
-    private fun initPlayer(): Player {
-        player = ExoPlayer.Builder(context)
-            .build().apply {
-                addListener(listener)
-                playWhenReady = true
-                playerView.player = this
+    private val playListener = object : Player.Listener {
+
+        override fun onPlaybackStateChanged(playbackState: Int) {
+            super.onPlaybackStateChanged(playbackState)
+
+            when (playbackState) {
+                Player.STATE_BUFFERING -> {
+                    // 缓冲中
+                    Log.d(MediaPlayerFragment.TAG, "STATE_BUFFERING")
+                }
+
+                Player.STATE_READY -> {
+                    // 播放器准备好
+                    player.play()
+                    canRetryConnect = true
+                    Log.d(MediaPlayerFragment.TAG, "STATE_READY")
+                }
+
+                Player.STATE_ENDED -> {
+                    // 播放结束
+                    Log.d(MediaPlayerFragment.TAG, "STATE_ENDED")
+                    canRetryConnect = true
+                }
+
+                Player.STATE_IDLE -> {
+                    // 播放器空闲
+                    Log.d(MediaPlayerFragment.TAG, "STATE_IDLE")
+                    if (canRetryConnect) {
+                        player.prepare()
+                        canRetryConnect = false
+                    }
+                }
             }
-        return player
-    }
+        }
 
-    fun setVideoUrl(url: String) {
-        videoUrl = url
-        if (::player.isInitialized) {
-            player.setMediaItem(MediaItem.fromUri(Uri.parse(videoUrl)))
-            Log.d(TAG,"setVideoUrl playbackState =${player.playbackState}")
-            player.prepare()
+        override fun onPlayerError(error: PlaybackException) {
+            super.onPlayerError(error)
+            error.printStackTrace()
         }
     }
 
-    fun prepare(){
-        if (::player.isInitialized) {
-            player.prepare()
+    init {
+        player.addListener(playListener)
+    }
+
+    fun setMediaItem(mediaItem: com.yan.hometv.bean.MediaItem?) {
+        if (mediaItem == null) {
+            return
         }
+        val sysMediaItem = mediaItem.toSysMediaItem()
+        player.setMediaItem(sysMediaItem)
+        Log.d(TAG, "setVideoUrl playbackState =${player.playbackState}")
+        player.prepare()
+    }
+
+    fun addMediaItem(mediaItem: com.yan.hometv.bean.MediaItem) {
+        val sysMediaItem = mediaItem.toSysMediaItem()
+        player.addMediaItem(sysMediaItem)
+        Log.d(TAG, "setVideoUrl playbackState =${player.playbackState}")
+    }
+
+    fun prepare() {
+        player.prepare()
     }
 
     fun play() {
-        if (::player.isInitialized) {
-            player.play()
-        }
+        player.play()
     }
 
     fun pause() {
-        if (::player.isInitialized) {
-            player.pause()
-        }
+        player.pause()
     }
-
-    override fun onCreate(owner: LifecycleOwner) {
-        super.onCreate(owner)
-        initPlayer()
-    }
-
-    override fun onPause(owner: LifecycleOwner) {
-        super.onPause(owner)
-        if (::player.isInitialized) {
-            player.pause()
-        }
-    }
-
-    override fun onDestroy(owner: LifecycleOwner) {
-        super.onDestroy(owner)
-        if (::player.isInitialized) {
-            player.release()
-        }
-    }
-
-
 }
