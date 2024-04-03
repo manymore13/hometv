@@ -14,7 +14,20 @@
                 android:valueType="floatType" />
         </set>
     </item>
-
+    <item android:state_activated="true">
+        <set>
+            <objectAnimator
+                android:duration="@integer/config_shortAnimTime"
+                android:propertyName="scaleX"
+                android:valueTo="1.1"
+                android:valueType="floatType" />
+            <objectAnimator
+                android:duration="@integer/config_shortAnimTime"
+                android:propertyName="scaleY"
+                android:valueTo="1.1"
+                android:valueType="floatType" />
+        </set>
+    </item>
     <item>
         <set>
             <objectAnimator
