@@ -4,43 +4,46 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.tencent.mmkv.MMKV
 import com.yan.hometv.bean.MediaItem
-import com.yan.source.utils.MediaRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import net.bjoernpetersen.m3u.model.M3uEntry
 
 class MediaViewModel(application: Application) : AndroidViewModel(application) {
 
     val complete = MutableLiveData<String>()
-
     val mediaList = mutableListOf<MediaItem>()
-
     val selectMediaLiveData = MutableLiveData<MediaItem>()
 
-    val mediaRepo: MediaRepository by lazy {
+    private val mediaRepo: MediaRepository by lazy {
         MediaRepository()
+    }
+
+    companion object {
+        const val mediaItemListCacheTime = "mediaListCacheTime"
+        const val mediaListCache = "mediaListCache"
     }
 
     fun init() = viewModelScope.launch {
         val mapSource = getSource()
         val oldLogoHost = "https://live.fanmingming.com/"
         val newLogoHost = "https://cdn.jsdelivr.net/gh/fanmingming/live@latest/"
-        val remoutSource = mapSource.map { m3uEntry ->
+        val remoutSource = mapSource?.map { m3uEntry ->
             MediaItem(
                 m3uEntry.title ?: "",
                 m3uEntry.location.toString(),
-                m3uEntry.metadata["tvg-logo"]?.replace(oldLogoHost,newLogoHost) ?: ""
+                m3uEntry.metadata["tvg-logo"]?.replace(oldLogoHost, newLogoHost) ?: ""
             )
-        }.toMutableList()
+        }?.toMutableList()
         mediaList.clear()
-        mediaList.addAll(remoutSource)
+        mediaList.addAll(remoutSource ?: mutableListOf())
         complete.value = "complete"
 //        val mediaSourceMapData:MutableList<M3uEntry> =
     }
 
     private suspend fun getSource() = withContext(Dispatchers.IO) {
-        mediaRepo.getMediaSource()
+        val kv = MMKV.defaultMMKV()
+        mediaRepo.getTvMediaSource()
     }
 }
