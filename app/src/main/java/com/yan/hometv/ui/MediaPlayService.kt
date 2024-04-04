@@ -1,7 +1,13 @@
 package com.yan.hometv.ui
 
 import android.util.Log
+import androidx.annotation.OptIn
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.datasource.HttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 
@@ -18,11 +24,22 @@ class MediaPlayService : MediaSessionService() {
         const val TAG = "MediaPlayService"
     }
 
+    @OptIn(UnstableApi::class)
     override fun onCreate() {
         super.onCreate()
-        val player = ExoPlayer.Builder(this).build()
-        mediaSession = MediaSession.Builder(this, player)
+        val dataSourceFactory =
+            DataSource.Factory {
+                val dataSource = DefaultHttpDataSource()
+                // Set a custom authentication request header.
+                dataSource.setRequestProperty("allowCrossProtocolRedirects", "true")
+                dataSource
+            }
+        val player = ExoPlayer.Builder(this)
+            .setMediaSourceFactory(
+                DefaultMediaSourceFactory(this).setDataSourceFactory(dataSourceFactory)
+            )
             .build()
+        mediaSession = MediaSession.Builder(this, player).build()
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? {
