@@ -1,7 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.HomeTV" parent="Theme.Material3.DayNight.NoActionBar">
+    <!-- Base application theme. -->
+    <style name="BaseAppTheme" parent="Theme.MaterialComponents.DayNight">
+        <!-- Customize your theme here. -->
+<!--        <item name="colorPrimary">@color/primary</item>-->
+<!--        <item name="colorPrimaryDark">@color/primary_dark</item>-->
+<!--        <item name="colorPrimaryVariant">@color/primary_dark</item>-->
+<!--        <item name="colorOnPrimary">@color/secondary</item>-->
+<!--        <item name="colorSecondary">@color/accent</item>-->
+<!--        <item name="colorOnSecondary">@color/colorWhite</item>-->
+<!--        <item name="colorAccent">@color/accent</item>-->
+<!--        <item name="colorOnSurface">@color/textTitle</item>-->
+
+<!--        <item name="android:textColor">@color/textBody</item>-->
+<!--        <item name="android:textColorHint">@color/textHint</item>-->
+<!--        <item name="android:textColorPrimary">@color/textTitle</item>-->
+<!--        <item name="android:textColorSecondary">@color/textBody</item>-->
+<!--        <item name="android:colorBackground">@color/colorBackground</item>-->
+<!--        <item name="android:textDirection">locale</item>-->
+<!--        <item name="android:textAlignment">gravity</item>-->
+
+<!--        <item name="detailItemViewStyle">@style/ItemDetail</item>-->
+<!--        <item name="detailListItemViewStyle">@style/ListItemDetail</item>-->
+<!--        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>-->
+
+<!--        <item name="windowActionBar">true</item>-->
+<!--        <item name="windowNoTitle">true</item>-->
+<!--        <item name="android:windowTranslucentStatus">true</item>-->
+<!--        <item  name="android:windowActivityTransitions">true</item>-->
+
+<!--        <item name="snackbarButtonStyle">@style/SnackbarActionButton</item>-->
+<!--        <item name="materialAlertDialogTheme">@style/AlertDialogTheme</item>-->
+<!--        <item name="toolbarStyle">@style/Toolbar</item>-->
+<!--        <item name="textAppearanceButton">@style/TextAppearanceButton</item>-->
+<!--        <item name="materialButtonStyle">@style/MaterialButton</item>-->
+
+    </style>
+
+    <style name="Theme.HomeTV" parent="BaseAppTheme">
 
     </style>
     <!--    <style name="Theme.HomeTV" parent="android:Theme.Material.Light.NoActionBar" />-->

@@ -41,7 +41,6 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private suspend fun getSource() = withContext(Dispatchers.IO) {
-        val kv = MMKV.defaultMMKV()
         mediaRepo.getTvMediaSource()
     }
 }

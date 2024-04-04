@@ -53,6 +53,10 @@ class MediaPlayerFragment : Fragment() {
                 mediaPlayHelper?.prepare()
             }
         })
+        if (mediaItem != null) {
+            showMediaInfo(mediaItem!!)
+        }
+
         return binding.root
     }
 
@@ -90,6 +94,13 @@ class MediaPlayerFragment : Fragment() {
             this.mediaItem = null
         } else {
             this.mediaItem = mediaItem
+        }
+        showMediaInfo(mediaItem)
+    }
+
+    private fun showMediaInfo(mediaItem: MediaItem) {
+        if (!::binding.isInitialized) {
+            return
         }
         TransitionManager.beginDelayedTransition(binding.includeMediaInfo.root)
         binding.includeMediaInfo.run {
