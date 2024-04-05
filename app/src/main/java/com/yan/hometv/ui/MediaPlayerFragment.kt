@@ -1,6 +1,5 @@
 package com.yan.hometv.ui
 
-import android.content.ComponentName
 import android.os.Bundle
 import android.transition.TransitionManager
 import android.view.LayoutInflater
@@ -9,12 +8,8 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.session.MediaController
-import androidx.media3.session.SessionToken
 import com.bumptech.glide.Glide
-import com.google.common.util.concurrent.MoreExecutors
 import com.yan.hometv.MediaPlayHelper
 import com.yan.hometv.bean.MediaItem
 import com.yan.hometv.databinding.MediaPlayerBinding
@@ -30,7 +25,7 @@ class MediaPlayerFragment : Fragment() {
     var rootClick: View.OnClickListener? = null
 
     companion object {
-        const val delay = 1500L
+        const val DELAY = 2000L
         const val TAG = "MediaPlayerFragment"
     }
 
@@ -40,6 +35,7 @@ class MediaPlayerFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        mediaPlayHelper = MediaPlayHelper(requireContext())
         binding = MediaPlayerBinding.inflate(inflater, container, false)
         binding.playerView.run {
             useController = false
@@ -54,7 +50,7 @@ class MediaPlayerFragment : Fragment() {
             }
         })
         if (mediaItem != null) {
-            showMediaInfo(mediaItem!!)
+            showMediaInfoToast(mediaItem!!)
         }
 
         return binding.root
@@ -69,23 +65,11 @@ class MediaPlayerFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
-        val context = requireContext()
-        val sessionToken =
-            SessionToken(context, ComponentName(context, MediaPlayService::class.java))
-        val controllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
-        controllerFuture.addListener(
-            {
-                // Call controllerFuture.get() to retrieve the MediaController.
-                // MediaController implements the Player interface, so it can be
-                // attached to the PlayerView UI component.
-                val player = controllerFuture.get()
-                binding.playerView.player = player
-                mediaPlayHelper = getVideoPlayHelper(player)
-                lifecycle.addObserver(mediaPlayHelper!!)
-                mediaPlayHelper?.setMediaItem(mediaItem)
-            },
-            MoreExecutors.directExecutor()
-        )
+        mediaPlayHelper?.asyncGetPlayer { player->
+            binding.playerView.player = player
+            lifecycle.addObserver(mediaPlayHelper!!)
+            mediaPlayHelper?.setMediaItem(mediaItem)
+        }
     }
 
     fun setMediaItem(mediaItem: MediaItem) {
@@ -95,10 +79,10 @@ class MediaPlayerFragment : Fragment() {
         } else {
             this.mediaItem = mediaItem
         }
-        showMediaInfo(mediaItem)
+        showMediaInfoToast(mediaItem)
     }
 
-    private fun showMediaInfo(mediaItem: MediaItem) {
+    private fun showMediaInfoToast(mediaItem: MediaItem) {
         if (!::binding.isInitialized) {
             return
         }
@@ -108,7 +92,7 @@ class MediaPlayerFragment : Fragment() {
             mediaName.text = mediaItem.mediaName
             root.isVisible = true
             lifecycleScope.launch {
-                delay(delay)
+                delay(DELAY)
                 TransitionManager.beginDelayedTransition(binding.includeMediaInfo.root)
                 root.isVisible = false
             }
@@ -121,10 +105,6 @@ class MediaPlayerFragment : Fragment() {
 
     fun pause() {
         mediaPlayHelper?.pause()
-    }
-
-    private fun getVideoPlayHelper(player: Player): MediaPlayHelper {
-        return MediaPlayHelper(requireContext(), player)
     }
 
 }

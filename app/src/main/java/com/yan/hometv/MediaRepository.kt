@@ -1,11 +1,9 @@
 package com.yan.hometv
 
 import android.util.Log
-import com.tencent.mmkv.MMKV
 import com.yan.source.utils.MediaSource
 import com.yan.source.utils.request
 import com.yan.source.utils.save
-import com.yan.source.utils.setDefault
 import net.bjoernpetersen.m3u.M3uParser
 import net.bjoernpetersen.m3u.model.M3uEntry
 
@@ -31,15 +29,21 @@ class MediaRepository {
 //        return mediaMap
 //    }
 
+    /**
+     * 是否需要从网络上拉取资源
+     */
+    private fun isNeedFromNet(source: MediaSource): Boolean {
+        val recordTime = source.recordTime
+        return (recordTime == 0L) || (System.currentTimeMillis() - recordTime) > WEEK
+    }
+
     suspend fun getMediaSource(source: MediaSource): MutableList<M3uEntry>? {
 
-        val recordTime = source.recordTime
         var m3uFileStr: String? = null
-        if ((recordTime == 0L) || (System.currentTimeMillis() - recordTime) > WEEK) {
+        if (isNeedFromNet(source)) {
             m3uFileStr = request(source.sourceUrl)
             if (m3uFileStr.isNotEmpty()) {
                 source.save(System.currentTimeMillis(), m3uFileStr)
-                source.setDefault()
                 Log.d(TAG, "---- net get source")
             }
         } else {

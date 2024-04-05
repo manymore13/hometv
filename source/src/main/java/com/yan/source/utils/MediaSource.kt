@@ -3,6 +3,7 @@ package com.yan.source.utils
 import androidx.lifecycle.DEFAULT_ARGS_KEY
 import com.tencent.mmkv.MMKV
 import com.yan.source.utils.MediaSource.Companion.DEFAULT_SOURCE_NAME
+import com.yan.source.utils.MediaSource.Companion.SOURCE_NAME_LIST
 import java.math.BigInteger
 import java.security.MessageDigest
 
@@ -11,9 +12,16 @@ val kv: MMKV = MMKV.defaultMMKV()
 data class MediaSource(val sourceName: String) {
 
     companion object {
+
         const val DEFAULT_SOURCE_NAME = "default_source_name"
+        const val SOURCE_NAME_LIST = "source_name_list"
+
         fun getDefaultSourceName(): String {
             return kv.decodeString(DEFAULT_SOURCE_NAME) ?: ""
+        }
+
+        fun getSourceNameList(): MutableSet<String>? {
+            return kv.decodeStringSet(SOURCE_NAME_LIST)
         }
     }
 
@@ -53,10 +61,28 @@ fun MediaSource.save(time: Long, sourceStr: String) {
     kv.encode(recordTimeKey, time)
     kv.encode(sourceStrKey, sourceStr)
     kv.encode(sourceUrlKey, sourceUrl)
+    setDefault()
+    saveToSourceNameList()
 }
 
-fun MediaSource.setDefault() {
+/**
+ * 设置默认的源名称
+ */
+private fun MediaSource.setDefault() {
     kv.encode(DEFAULT_SOURCE_NAME, sourceName)
+}
+
+/**
+ * 保存到源目录列表中
+ */
+private fun MediaSource.saveToSourceNameList() {
+    var sourceNameSet: MutableSet<String>? = kv.decodeStringSet(SOURCE_NAME_LIST)?.toMutableSet()
+    if (sourceNameSet == null) {
+        sourceNameSet = mutableSetOf(sourceName)
+    } else {
+        sourceNameSet.add(sourceName)
+    }
+    kv.encode(SOURCE_NAME_LIST, sourceNameSet)
 }
 
 fun String.md5(): String {

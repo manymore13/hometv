@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.tencent.mmkv.MMKV
 import com.yan.hometv.bean.MediaItem
+import com.yan.hometv.utils.toast
 import com.yan.source.utils.MediaSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,6 +17,7 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
     val complete = MutableLiveData<String>()
     val mediaList = mutableListOf<MediaItem>()
     val selectMediaLiveData = MutableLiveData<MediaItem>()
+    val showLoading = MutableLiveData(false)
 
     private val mediaRepo: MediaRepository by lazy {
         MediaRepository()
@@ -38,15 +40,41 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
         } else {
             defaultSource = MediaSource(defaultSourceName)
         }
-        initSource(defaultSource)
+        try {
+            initSource(defaultSource)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            showLoading.value = false
+            toast(e.message)
+        }
+    }
+
+    fun loadSource(sourceName: String) = viewModelScope.launch {
+        try {
+            initSource(MediaSource(sourceName))
+        }catch (e:Exception){
+            showLoading.value = false
+            toast(e.message)
+        }
     }
 
     fun addNewSource(mediaSource: MediaSource) = viewModelScope.launch {
-        initSource(mediaSource)
+        try {
+            initSource(mediaSource)
+        }catch (e:Exception){
+            e.printStackTrace()
+            showLoading.value = false
+            toast(e.message)
+        }
     }
 
     private suspend fun initSource(mediaSource: MediaSource) = withContext(Dispatchers.IO) {
+        showLoading.postValue(true)
+        try {
 
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         val mapSource = mediaRepo.getMediaSource(mediaSource)
 //        val oldLogoHost = "https://live.fanmingming.com/"
 //        val newLogoHost = "https://cdn.jsdelivr.net/gh/fanmingming/live@latest/"
@@ -61,6 +89,7 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
         mediaList.clear()
         mediaList.addAll(remoteSource ?: mutableListOf())
         complete.postValue("complete")
+        showLoading.postValue(false)
     }
 
 }

@@ -6,6 +6,7 @@ import android.view.KeyEvent
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
+import com.yan.hometv.R
 import com.yan.hometv.bean.MediaItem
 import com.yan.hometv.utils.hideFragment
 import com.yan.hometv.utils.showFragment
@@ -31,7 +32,7 @@ class W720UiHelper(activity: FragmentActivity, mediaPlayResId: Int, mediaListRes
 
             binding.mediaList.isVisible = !binding.mediaList.isVisible
 
-            showFragment(activity.supportFragmentManager, mediaListFragment)
+            showFragment(activity.supportFragmentManager, R.id.media_list, mediaListFragment)
         }
     }
 

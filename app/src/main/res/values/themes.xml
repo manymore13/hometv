@@ -4,24 +4,25 @@
     <!-- Base application theme. -->
     <style name="BaseAppTheme" parent="Theme.MaterialComponents.DayNight">
         <!-- Customize your theme here. -->
-<!--        <item name="colorPrimary">@color/primary</item>-->
-<!--        <item name="colorPrimaryDark">@color/primary_dark</item>-->
-<!--        <item name="colorPrimaryVariant">@color/primary_dark</item>-->
-<!--        <item name="colorOnPrimary">@color/secondary</item>-->
-<!--        <item name="colorSecondary">@color/accent</item>-->
-<!--        <item name="colorOnSecondary">@color/colorWhite</item>-->
-<!--        <item name="colorAccent">@color/accent</item>-->
-<!--        <item name="colorOnSurface">@color/textTitle</item>-->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorPrimaryVariant">@color/primary_dark</item>
+        <item name="colorOnPrimary">@color/secondary</item>
+        <item name="colorSecondary">@color/accent</item>
+        <item name="colorOnSecondary">@color/colorWhite</item>
+        <item name="colorAccent">@color/accent</item>
+        <item name="colorOnSurface">@color/textTitle</item>
+        <item name="android:textColor">@color/textBody</item>
+        <item name="android:textColorHint">@color/textHint</item>
+        <item name="android:textColorPrimary">@color/textTitle</item>
+        <item name="android:textColorSecondary">@color/textBody</item>
+        <item name="android:colorBackground">@color/colorBackground</item>
+        <item name="android:textDirection">locale</item>
+        <item name="android:textAlignment">gravity</item>
+        <item name="actionBarTheme">@style/MyActionBarTheme</item>
 
-<!--        <item name="android:textColor">@color/textBody</item>-->
-<!--        <item name="android:textColorHint">@color/textHint</item>-->
-<!--        <item name="android:textColorPrimary">@color/textTitle</item>-->
-<!--        <item name="android:textColorSecondary">@color/textBody</item>-->
-<!--        <item name="android:colorBackground">@color/colorBackground</item>-->
-<!--        <item name="android:textDirection">locale</item>-->
-<!--        <item name="android:textAlignment">gravity</item>-->
 
-<!--        <item name="detailItemViewStyle">@style/ItemDetail</item>-->
+        <!--        <item name="detailItemViewStyle">@style/ItemDetail</item>-->
 <!--        <item name="detailListItemViewStyle">@style/ListItemDetail</item>-->
 <!--        <item name="preferenceTheme">@style/PreferenceThemeOverlay.v14.Material</item>-->
 
@@ -38,8 +39,19 @@
 
     </style>
 
-    <style name="Theme.HomeTV" parent="BaseAppTheme">
-
+    <!-- 自定义的 ActionBar 标题文本样式 -->
+    <style name="MyActionBarTheme" parent="Theme.MaterialComponents.DayNight">
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="colorPrimary">@color/primary</item>
     </style>
+
+    <style name="Theme.HomeTV" parent="BaseAppTheme"/>
+    <style name="Theme.Full" parent="BaseAppTheme">
+        <item name="windowActionBar">true</item>-->
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowActivityTransitions">true</item>
+    </style>
+
     <!--    <style name="Theme.HomeTV" parent="android:Theme.Material.Light.NoActionBar" />-->
 </resources>

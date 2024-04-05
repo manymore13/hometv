@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.annotation.CallSuper
 import androidx.annotation.IdRes
+import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import com.yan.hometv.MediaViewModel
@@ -34,14 +35,6 @@ abstract class MediaUiHelper(
     @CallSuper
     override fun onCreate(savedInstanceState: Bundle?) {
 
-        if (savedInstanceState == null) {
-            val fragmentManager = activity.supportFragmentManager
-            fragmentManager.beginTransaction()
-                .replace(mediaListResId, mediaListFragment, MediaListFragment.TAG)
-                .replace(mediaPlayResId, mediaPlayerFragment, MediaPlayerFragment.TAG)
-                .commit()
-        }
-
         mediaModel.selectMediaLiveData.observe(activity) {
             onClickSelectMediaItem(it)
         }
@@ -50,11 +43,19 @@ abstract class MediaUiHelper(
             mediaSourceLoadedComplete()
         }
 
+        mediaModel.showLoading.observe(activity) { show ->
+            showLoading(show)
+        }
+
     }
 
     @CallSuper
     override fun onClickSelectMediaItem(mediaItem: MediaItem) {
-        mediaPlayerFragment.setMediaItem(mediaItem)
+//        mediaPlayerFragment.setMediaItem(mediaItem)
+    }
+
+    private fun showLoading(showLoading: Boolean) {
+        binding.load?.isVisible = showLoading
     }
 
 }

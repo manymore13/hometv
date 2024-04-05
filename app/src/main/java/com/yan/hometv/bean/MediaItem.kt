@@ -18,3 +18,8 @@ fun MediaItem.toSysMediaItem(): androidx.media3.common.MediaItem {
         .setUri(Uri.parse(mediaUrl))
         .build()
 }
+
+fun androidx.media3.common.MediaItem.toMediaItem(): MediaItem {
+    val metadata = this.mediaMetadata
+    return MediaItem(metadata.title.toString(), "", metadata.artworkUri.toString())
+}

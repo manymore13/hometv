@@ -25,6 +25,7 @@ class MediaPlayService : MediaSessionService() {
     @OptIn(UnstableApi::class)
     override fun onCreate() {
         super.onCreate()
+        Log.d(TAG, "onCreate: ")
         val dataSourceFactory =
             DefaultHttpDataSource.Factory().apply {
                 setAllowCrossProtocolRedirects(true)

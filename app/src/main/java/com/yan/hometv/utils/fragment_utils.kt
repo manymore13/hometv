@@ -4,13 +4,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.yan.hometv.R
 
-fun showFragment(fragmentManager: FragmentManager, fragment: Fragment) {
+fun showFragment(fragmentManager: FragmentManager, resId: Int, fragment: Fragment) {
     fragmentManager.beginTransaction()
         .setCustomAnimations(
             R.anim.right_in, R.anim.left_out,
             R.anim.left_in, R.anim.right_out
-        ).show(fragment)
-        .addToBackStack(fragment.tag)
+        ).replace(resId, fragment)
         .commit()
 }
 
