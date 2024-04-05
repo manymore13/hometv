@@ -65,7 +65,8 @@ class MediaListFragment : Fragment() {
             }
         }
         binding.mediaPlayInfo?.root?.setOnClickListener {
-            PlayerActivity.start(requireActivity())
+            mediaPlayHelper.pause()
+            PlayerActivity.start(requireActivity(), mediaItem)
         }
         val mediaModel = ViewModelProvider(requireActivity())[MediaViewModel::class.java]
         mediaModel.complete.observe(requireActivity()) {
@@ -83,7 +84,10 @@ class MediaListFragment : Fragment() {
         return binding.root
     }
 
+    var mediaItem: MediaItem? = null
+
     private fun itemSelected(mediaItem: MediaItem) {
+        this.mediaItem = mediaItem
         binding.mediaPlayInfo?.tvMediaInfo?.text = ""
         showMediaInfo(mediaItem)
         mediaPlayHelper.setMediaItem(mediaItem)

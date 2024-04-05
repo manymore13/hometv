@@ -25,13 +25,12 @@ class PhoneUiHelper(activity: FragmentActivity, mediaPlayResId: Int, mediaListRe
             .replace(mediaListResId, mediaListFragment, MediaListFragment.TAG)
             .commit()
         mediaModel.init()
-        hideFragment(activity.supportFragmentManager, mediaPlayerFragment)
     }
 
     override fun onClickSelectMediaItem(mediaItem: MediaItem) {
         super.onClickSelectMediaItem(mediaItem)
-        val fragmentManager = activity.supportFragmentManager
-        showFragment(fragmentManager, R.id.media_play, mediaPlayerFragment)
+//        val fragmentManager = activity.supportFragmentManager
+//        showFragment(fragmentManager, R.id.media_play, mediaPlayerFragment)
     }
 
     override fun mediaSourceLoadedComplete() {
@@ -47,7 +46,7 @@ class PhoneUiHelper(activity: FragmentActivity, mediaPlayResId: Int, mediaListRe
         for (i in 0..stackCount - 1) {
             val stack = fragmentManager.getBackStackEntryAt(i)
             if (stack.name == MediaPlayerFragment.TAG) {
-                mediaPlayerFragment.pause()
+//                mediaPlayerFragment.pause()
                 break
             }
         }

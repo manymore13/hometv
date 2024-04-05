@@ -1,10 +1,13 @@
 package com.yan.hometv.bean
 
 import android.net.Uri
+import android.os.Parcelable
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.MimeTypes
+import kotlinx.android.parcel.Parcelize
 
-data class MediaItem(val mediaName: String, val mediaUrl: String, val iconUrl: String)
+@Parcelize
+data class MediaItem(val mediaName: String, val mediaUrl: String, val iconUrl: String): Parcelable
 
 fun MediaItem.toSysMediaItem(): androidx.media3.common.MediaItem {
     val metaData = MediaMetadata.Builder()

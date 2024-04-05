@@ -18,7 +18,7 @@ abstract class MediaUiHelper(
     @IdRes val mediaPlayResId: Int, @IdRes val mediaListResId: Int
 ) : IMediaDeviceUi {
 
-    protected val mediaPlayerFragment = MediaPlayerFragment()
+//    protected val mediaPlayerFragment = MediaPlayerFragment()
     protected val mediaListFragment = MediaListFragment()
 
     protected lateinit var binding: ActivityMainBinding

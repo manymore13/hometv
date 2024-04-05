@@ -26,14 +26,14 @@ class W720UiHelper(activity: FragmentActivity, mediaPlayResId: Int, mediaListRes
             .hide(mediaListFragment)
             .commit()
 
-        mediaPlayerFragment.rootClick = View.OnClickListener {
-
-            TransitionManager.beginDelayedTransition(binding.mediaList)
-
-            binding.mediaList.isVisible = !binding.mediaList.isVisible
-
-            showFragment(activity.supportFragmentManager, R.id.media_list, mediaListFragment)
-        }
+//        mediaPlayerFragment.rootClick = View.OnClickListener {
+//
+//            TransitionManager.beginDelayedTransition(binding.mediaList)
+//
+//            binding.mediaList.isVisible = !binding.mediaList.isVisible
+//
+//            showFragment(activity.supportFragmentManager, R.id.media_list, mediaListFragment)
+//        }
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
@@ -47,7 +47,7 @@ class W720UiHelper(activity: FragmentActivity, mediaPlayResId: Int, mediaListRes
 
     override fun mediaSourceLoadedComplete() {
         if (mediaModel.mediaList.size > 0) {
-            mediaPlayerFragment.setMediaItem(mediaModel.mediaList[0])
+//            mediaPlayerFragment.setMediaItem(mediaModel.mediaList[0])
         }
     }
 
