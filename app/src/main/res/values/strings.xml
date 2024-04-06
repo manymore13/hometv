@@ -14,4 +14,6 @@
     <string name="is_support_audio">音频</string>
 
     <string name="not_support_video_warn">非视频不支持跳转</string>
+    <string name="error_code_io_network_connection_failed">网络连接错误,请检查设备网络</string>
+    <string name="error_code_io_network_connection_timeout">网络连接超时，请稍后重试</string>
 </resources>

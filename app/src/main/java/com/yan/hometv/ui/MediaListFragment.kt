@@ -69,8 +69,9 @@ class MediaListFragment : Fragment() {
         binding.mediaPlayInfo?.root?.setOnClickListener {
             if (mediaPlayHelper.isSupportVideo()) {
                 PlayerActivity.start(requireActivity(), mediaItem)
+            } else {
+                toast(getString(R.string.not_support_video_warn))
             }
-            toast(getString(R.string.not_support_video_warn))
         }
         val mediaModel = ViewModelProvider(requireActivity())[MediaViewModel::class.java]
         mediaModel.complete.observe(requireActivity()) {
@@ -125,7 +126,7 @@ class MediaListFragment : Fragment() {
                 Player.STATE_READY -> {
                     binding.mediaPlayInfo?.run {
                         binding.mediaPlayInfo?.tvPlayState?.isVisible = false
-                        tvMediaInfo.text = mediaPlayHelper.getMediaDebugInfo()
+                        tvMediaInfo.text = mediaPlayHelper.getMediaTypeInfo()
                     }
                 }
 

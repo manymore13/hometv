@@ -17,6 +17,8 @@ import com.yan.hometv.bean.MediaItem
 import com.yan.hometv.bean.toSysMediaItem
 import com.yan.hometv.ui.MediaPlayService
 import com.yan.hometv.ui.MediaPlayerFragment
+import com.yan.hometv.utils.getErrorCodeName
+import com.yan.hometv.utils.toast
 import java.lang.StringBuilder
 
 class MediaPlayHelper(private val context: Context) :
@@ -75,6 +77,8 @@ class MediaPlayHelper(private val context: Context) :
 
         override fun onPlayerError(error: PlaybackException) {
             super.onPlayerError(error)
+            val info = "${error.errorCode}:${getErrorCodeName(error.errorCode)}"
+            toast(info)
             error.printStackTrace()
         }
 
@@ -166,7 +170,7 @@ class MediaPlayHelper(private val context: Context) :
         return player?.currentTracks?.isTypeSupported(C.TRACK_TYPE_VIDEO) ?: false
     }
 
-    fun getMediaDebugInfo(): String {
+    fun getMediaTypeInfo(): String {
         val isSupportVideo = player?.currentTracks?.isTypeSupported(C.TRACK_TYPE_VIDEO) ?: false
         val isSupportAudio = player?.currentTracks?.isTypeSupported(C.TRACK_TYPE_AUDIO) ?: false
         val info = StringBuilder()
