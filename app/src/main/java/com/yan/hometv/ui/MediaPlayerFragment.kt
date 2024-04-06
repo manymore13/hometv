@@ -22,7 +22,7 @@ class MediaPlayerFragment : Fragment() {
     private lateinit var binding: MediaPlayerBinding
     private lateinit var mediaPlayHelper: MediaPlayHelper
     private var mediaItem: MediaItem? = null
-    var rootClick: View.OnClickListener? = null
+    private var rootClick: View.OnClickListener? = null
 
     companion object {
         const val DELAY = 2000L

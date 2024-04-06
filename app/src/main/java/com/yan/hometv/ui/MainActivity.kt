@@ -1,23 +1,16 @@
 package com.yan.hometv.ui
 
 import android.os.Bundle
-import android.view.ContextMenu
 import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.view.View
-import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import com.tencent.mmkv.MMKV
 import com.yan.hometv.MediaViewModel
 import com.yan.hometv.R
-import com.yan.hometv.databinding.ActivityMainBinding
 import com.yan.hometv.ui.helper.IMediaDeviceUi
-import com.yan.hometv.utils.isW720
-import com.yan.hometv.utils.showFragment
 import com.yan.source.utils.MediaSource
 
 open class MainActivity : AppCompatActivity() {
@@ -37,9 +30,7 @@ open class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(uiHelper.bindView())
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         uiHelper.onCreate(savedInstanceState)
-
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
