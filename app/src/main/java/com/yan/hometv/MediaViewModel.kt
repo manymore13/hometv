@@ -8,6 +8,8 @@ import com.tencent.mmkv.MMKV
 import com.yan.hometv.bean.MediaItem
 import com.yan.hometv.utils.toast
 import com.yan.source.utils.MediaSource
+import com.yan.source.utils.save
+import com.yan.source.utils.setDefault
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -70,11 +72,6 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
 
     private suspend fun initSource(mediaSource: MediaSource) = withContext(Dispatchers.IO) {
         showLoading.postValue(true)
-        try {
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
         val mapSource = mediaRepo.getMediaSource(mediaSource)
 //        val oldLogoHost = "https://live.fanmingming.com/"
 //        val newLogoHost = "https://cdn.jsdelivr.net/gh/fanmingming/live@latest/"
@@ -86,6 +83,7 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
 //                m3uEntry.metadata["tvg-logo"]?.replace(oldLogoHost, newLogoHost) ?: ""
             )
         }?.toMutableList()
+        mediaSource.setDefault()
         mediaList.clear()
         mediaList.addAll(remoteSource ?: mutableListOf())
         complete.postValue("complete")

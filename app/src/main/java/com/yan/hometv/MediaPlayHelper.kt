@@ -11,7 +11,9 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
+import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
+import com.yan.hometv.bean.MediaItem
 import com.yan.hometv.bean.toSysMediaItem
 import com.yan.hometv.ui.MediaPlayService
 import com.yan.hometv.ui.MediaPlayerFragment
@@ -21,6 +23,10 @@ class MediaPlayHelper(private val context: Context) :
     DefaultLifecycleObserver {
 
     private var canRetryConnect = false
+
+    private var controllerFuture: ListenableFuture<MediaController>? = null
+
+    private var sysMediaItem: androidx.media3.common.MediaItem? = null
 
     var player: Player? = null
 
@@ -81,6 +87,17 @@ class MediaPlayHelper(private val context: Context) :
         }
     }
     private var outPlayListener: Player.Listener? = null
+    var asyncGetPlayer: ((Player) -> Unit)? = null
+
+    override fun onStart(owner: LifecycleOwner) {
+        super.onStart(owner)
+        asyncGetPlayer()
+    }
+
+    override fun onStop(owner: LifecycleOwner) {
+        super.onStop(owner)
+        controllerFuture?.let { MediaController.releaseFuture(it) }
+    }
 
     override fun onDestroy(owner: LifecycleOwner) {
         super.onDestroy(owner)
@@ -97,10 +114,11 @@ class MediaPlayHelper(private val context: Context) :
         return this
     }
 
-    fun asyncGetPlayer(block: (Player) -> Unit): MediaPlayHelper {
+    private fun asyncGetPlayer(): MediaPlayHelper {
         val sessionToken =
             SessionToken(context, ComponentName(context, MediaPlayService::class.java))
         val controllerFuture = MediaController.Builder(context, sessionToken).buildAsync()
+        this.controllerFuture = controllerFuture
         controllerFuture.addListener(
             {
                 // Call controllerFuture.get() to retrieve the MediaController.
@@ -109,28 +127,43 @@ class MediaPlayHelper(private val context: Context) :
                 val player = controllerFuture.get()
                 this.player = player
                 player.addListener(playListener)
+                this.sysMediaItem?.let {
+                    player.setMediaItem(it)
+                    player.prepare()
+                }
+                this.sysMediaItem = null
                 outPlayListener?.let { player.addListener(it) }
-                block(player)
+                asyncGetPlayer?.let { it(player) }
             },
             MoreExecutors.directExecutor()
         )
         return this
     }
 
-    fun setMediaItem(mediaItem: com.yan.hometv.bean.MediaItem?) {
+    fun setMediaItem(mediaItem: MediaItem?) {
         if (mediaItem == null) {
             return
         }
         val sysMediaItem = mediaItem.toSysMediaItem()
-        player?.setMediaItem(sysMediaItem)
-        Log.d(TAG, "setVideoUrl playbackState =${player?.playbackState}")
-        player?.prepare()
+        if (player == null) {
+            this.sysMediaItem = sysMediaItem
+            return
+        }
+        player?.run {
+            setMediaItem(sysMediaItem)
+            prepare()
+            Log.d(TAG, "setVideoUrl playbackState =${player?.playbackState}")
+        }
     }
 
-    fun addMediaItem(mediaItem: com.yan.hometv.bean.MediaItem) {
+    fun addMediaItem(mediaItem: MediaItem) {
         val sysMediaItem = mediaItem.toSysMediaItem()
         player?.addMediaItem(sysMediaItem)
         Log.d(TAG, "setVideoUrl playbackState =${player?.playbackState}")
+    }
+
+    fun isSupportVideo(): Boolean {
+        return player?.currentTracks?.isTypeSupported(C.TRACK_TYPE_VIDEO) ?: false
     }
 
     fun getMediaDebugInfo(): String {

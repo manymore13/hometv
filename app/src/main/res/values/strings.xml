@@ -12,4 +12,6 @@
     <string name="state_buffering">正在缓冲</string>
     <string name="is_support_video">视频</string>
     <string name="is_support_audio">音频</string>
+
+    <string name="not_support_video_warn">非视频不支持跳转</string>
 </resources>

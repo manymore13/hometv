@@ -68,7 +68,7 @@ fun MediaSource.save(time: Long, sourceStr: String) {
 /**
  * 设置默认的源名称
  */
-private fun MediaSource.setDefault() {
+fun MediaSource.setDefault() {
     kv.encode(DEFAULT_SOURCE_NAME, sourceName)
 }
 

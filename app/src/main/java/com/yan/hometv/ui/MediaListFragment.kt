@@ -18,6 +18,7 @@ import com.yan.hometv.adapter.MediaAdapter
 import com.yan.hometv.bean.MediaItem
 import com.yan.hometv.bean.toMediaItem
 import com.yan.hometv.databinding.MediaListBinding
+import com.yan.hometv.utils.toast
 
 
 /**
@@ -37,18 +38,19 @@ class MediaListFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mediaPlayHelper = MediaPlayHelper(requireContext())
-            .asyncGetPlayer { player ->
+        mediaPlayHelper = MediaPlayHelper(requireContext()).apply {
+            asyncGetPlayer = { player ->
                 onGetPlayer(player)
                 mediaPlayHelper.setPlayerListener(MediaListener())
             }
+        }
+        lifecycle.addObserver(mediaPlayHelper)
     }
-
 
     private fun onGetPlayer(player: Player) {
         player.addListener(mediaListener)
         player.currentMediaItem?.toMediaItem()?.run {
-            showMediaInfo(this)
+            showMediaInfo(this, player.isPlaying)
         }
     }
 
@@ -65,8 +67,10 @@ class MediaListFragment : Fragment() {
             }
         }
         binding.mediaPlayInfo?.root?.setOnClickListener {
-            mediaPlayHelper.pause()
-            PlayerActivity.start(requireActivity(), mediaItem)
+            if (mediaPlayHelper.isSupportVideo()) {
+                PlayerActivity.start(requireActivity(), mediaItem)
+            }
+            toast(getString(R.string.not_support_video_warn))
         }
         val mediaModel = ViewModelProvider(requireActivity())[MediaViewModel::class.java]
         mediaModel.complete.observe(requireActivity()) {

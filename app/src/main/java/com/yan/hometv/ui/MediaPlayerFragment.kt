@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 class MediaPlayerFragment : Fragment() {
 
     private lateinit var binding: MediaPlayerBinding
-    private var mediaPlayHelper: MediaPlayHelper? = null
+    private lateinit var mediaPlayHelper: MediaPlayHelper
     private var mediaItem: MediaItem? = null
     var rootClick: View.OnClickListener? = null
 
@@ -29,56 +29,64 @@ class MediaPlayerFragment : Fragment() {
         const val TAG = "MediaPlayerFragment"
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val mediaPlayHelper = MediaPlayHelper(requireContext()).apply {
+            asyncGetPlayer = { player ->
+                binding.playerView.player = player
+            }
+        }
+        this.mediaPlayHelper = mediaPlayHelper
+        lifecycle.run {
+            addObserver(mediaPlayHelper)
+            addObserver(NetWorkStatusReceiver { isConnected ->
+                if (isConnected) {
+                    mediaPlayHelper.prepare()
+                }
+            })
+        }
+    }
+
     @UnstableApi
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        mediaPlayHelper = MediaPlayHelper(requireContext())
+
         binding = MediaPlayerBinding.inflate(inflater, container, false)
         binding.playerView.run {
             useController = false
         }
+        binding.playerView.player = mediaPlayHelper.player
 
         binding.root.setOnClickListener {
             rootClick?.onClick(it)
         }
-        lifecycle.addObserver(NetWorkStatusReceiver { isConnected ->
-            if (isConnected) {
-                mediaPlayHelper?.prepare()
-            }
-        })
         if (mediaItem != null) {
             showMediaInfoToast(mediaItem!!)
         }
-
+        val mediaItem = arguments?.getParcelable<MediaItem>(PlayerActivity.MEDIA_ITEM)
+        if (mediaItem != null) {
+            setMediaItem(mediaItem)
+        }
         return binding.root
     }
 
     override fun onResume() {
         super.onResume()
         if (view?.isVisible == true) {
-            mediaPlayHelper?.play()
+            mediaPlayHelper.play()
         }
     }
 
     override fun onStart() {
         super.onStart()
-        mediaPlayHelper?.asyncGetPlayer { player->
-            binding.playerView.player = player
-            lifecycle.addObserver(mediaPlayHelper!!)
-            mediaPlayHelper?.setMediaItem(mediaItem)
-        }
     }
 
-    fun setMediaItem(mediaItem: MediaItem) {
-        if (mediaPlayHelper != null) {
-            mediaPlayHelper!!.setMediaItem(mediaItem)
-            this.mediaItem = null
-        } else {
-            this.mediaItem = mediaItem
-        }
+    private fun setMediaItem(mediaItem: MediaItem) {
+        mediaPlayHelper.setMediaItem(mediaItem)
+        this.mediaItem = null
         showMediaInfoToast(mediaItem)
     }
 
@@ -100,11 +108,11 @@ class MediaPlayerFragment : Fragment() {
     }
 
     fun play() {
-        mediaPlayHelper?.play()
+        mediaPlayHelper.play()
     }
 
     fun pause() {
-        mediaPlayHelper?.pause()
+        mediaPlayHelper.pause()
     }
 
 }
