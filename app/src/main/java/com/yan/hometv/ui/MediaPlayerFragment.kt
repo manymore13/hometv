@@ -27,6 +27,7 @@ class MediaPlayerFragment : Fragment() {
     companion object {
         const val DELAY = 2000L
         const val TAG = "MediaPlayerFragment"
+        const val RECENT_MEDIA = "RECENT_MEDIA"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,32 +61,39 @@ class MediaPlayerFragment : Fragment() {
         }
         binding.playerView.player = mediaPlayHelper.player
 
+
         binding.root.setOnClickListener {
             rootClick?.onClick(it)
         }
         if (mediaItem != null) {
             showMediaInfoToast(mediaItem!!)
         }
-        val mediaItem = arguments?.getParcelable<MediaItem>(PlayerActivity.MEDIA_ITEM)
-        if (mediaItem != null) {
-            setMediaItem(mediaItem)
-        }
+
         return binding.root
+    }
+
+    private fun initArguments(){
+        arguments?.run {
+            val mediaItem = getParcelable<MediaItem>(RECENT_MEDIA)
+            if (mediaItem != null) {
+                setMediaItem(mediaItem)
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        if (view?.isVisible == true) {
-            mediaPlayHelper.play()
-        }
+        mediaPlayHelper.prepare()
+        mediaPlayHelper.play()
     }
 
     override fun onStart() {
+        initArguments()
         super.onStart()
     }
 
-    private fun setMediaItem(mediaItem: MediaItem) {
-        if (::mediaPlayHelper.isInitialized) {
+    fun setMediaItem(mediaItem: MediaItem) {
+        if (::mediaPlayHelper.isInitialized && activity != null) {
             mediaPlayHelper.setMediaItem(mediaItem)
             this.mediaItem = null
             showMediaInfoToast(mediaItem)

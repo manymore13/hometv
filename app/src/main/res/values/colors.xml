@@ -22,4 +22,5 @@
     <color name="overlay">#ddffffff</color>
 
     <color name="media_play_bg">#33000000</color>
+    <color name="media_list_bg">#332B61EA</color>
 </resources>

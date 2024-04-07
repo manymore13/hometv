@@ -10,6 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="?attr/listPreferredItemHeight"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusedByDefault="true"
         tools:listitem="@layout/media_item" />
 
     <include

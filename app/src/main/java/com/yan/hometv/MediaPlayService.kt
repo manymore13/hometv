@@ -1,6 +1,8 @@
 package com.yan.hometv
 
 import android.content.Intent
+import android.content.IntentFilter
+import android.media.AudioManager
 import android.util.Log
 import androidx.annotation.OptIn
 import androidx.core.content.ContextCompat
@@ -13,7 +15,7 @@ import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
-import com.yan.hometv.ui.BecomingNoisyReceiver
+import com.yan.hometv.ui.MediaPlayReceiver
 
 
 /**
@@ -25,9 +27,13 @@ class MediaPlayService : MediaSessionService() {
 
     private var mediaSession: MediaSession? = null
     private var player: Player? = null
-    private val becomingNoisyReceiver = object : BecomingNoisyReceiver() {
+    private val mediaPlayReceiver = object : MediaPlayReceiver() {
         override fun onPause() {
             player?.pause()
+        }
+
+        override fun onDestroy() {
+            needRelease()
         }
     }
 
@@ -56,13 +62,17 @@ class MediaPlayService : MediaSessionService() {
                 DefaultMediaSourceFactory(this).setDataSourceFactory(dataSourceFactory)
             )
             .build()
+        player.run {
+            playWhenReady = false
+        }
         this.player = player
         mediaSession = MediaSession.Builder(this, player).build()
         ContextCompat.registerReceiver(
             this,
-            becomingNoisyReceiver,
-            BecomingNoisyReceiver.intentFilter,
-            ContextCompat.RECEIVER_NOT_EXPORTED
+            mediaPlayReceiver,
+            IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY).apply {
+                addAction(MediaPlayReceiver.ACTION_DESTROY_EVENT)
+            }, ContextCompat.RECEIVER_NOT_EXPORTED
         )
     }
 
@@ -89,7 +99,11 @@ class MediaPlayService : MediaSessionService() {
             release()
             mediaSession = null
         }
-        unregisterReceiver(becomingNoisyReceiver)
+        unregisterReceiver(mediaPlayReceiver)
         super.onDestroy()
+    }
+
+    private fun needRelease() {
+        stopSelf()
     }
 }

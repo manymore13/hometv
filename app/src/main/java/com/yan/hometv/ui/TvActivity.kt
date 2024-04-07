@@ -2,18 +2,26 @@ package com.yan.hometv.ui
 
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.media.AudioManager
+import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.flexbox.FlexDirection
-import com.google.android.flexbox.FlexWrap
-import com.google.android.flexbox.FlexboxLayoutManager
 import com.yan.hometv.MediaViewModel
 import com.yan.hometv.R
+import com.yan.hometv.bean.MediaItem
 import com.yan.hometv.databinding.ActivityTvMainBinding
 
 /**
@@ -47,41 +55,117 @@ class TvActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityTvMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val recentMediaItem = mediaModel.getRecentMediaItem()
+        if (recentMediaItem != null) {
+            mediaPlayerFragment.arguments = Bundle().apply {
+                putParcelable(PlayerActivity.RECENT_MEDIA, recentMediaItem)
+            }
+        }
+
         supportFragmentManager.beginTransaction()
-            .replace(R.id.media_list, mediaListFragment, mediaListFragment::class.simpleName)
+            .replace(R.id.media_play, mediaPlayerFragment, mediaPlayerFragment::class.simpleName)
             .commit()
         mediaModel.init()
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         mediaModel.showLoading.observe(this) { show ->
             showLoading(show)
         }
+        mediaModel.complete.observe(this) {
+            playMediaItem(mediaModel.mediaList[0])
+        }
 
-        mediaModel.selectMediaLiveData.observe(this) { mediaItem ->
-            mediaPlayerFragment.arguments = Bundle().apply {
-                putParcelable(PlayerActivity.MEDIA_ITEM, mediaItem)
-            }
-            supportFragmentManager.beginTransaction()
-                .remove(mediaListFragment)
-                .replace(R.id.media_play, mediaPlayerFragment)
-                .addToBackStack("")
-                .commit()
+        mediaModel.selectMediaLiveData.observe(this) {
+            playMediaItem(it)
         }
     }
 
-    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
-        if (keyCode == KeyEvent.KEYCODE_MENU || keyCode == KeyEvent.KEYCODE_TV_CONTENTS_MENU) {
-            supportFragmentManager.popBackStack()
+    private fun playMediaItem(mediaItem: MediaItem) {
+        mediaPlayerFragment.arguments = Bundle().apply {
+            putParcelable(PlayerActivity.RECENT_MEDIA, mediaItem)
+        }
+        mediaPlayerFragment.setMediaItem(mediaItem)
+        showHideMediaListFragment(false)
+    }
+
+    private fun showHideMediaListFragment(show: Boolean) {
+        if (show) {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.media_list, mediaListFragment)
+                .setCustomAnimations(
+                    R.anim.left_in,
+                    R.anim.right_out,
+                    R.anim.left_in,
+                    R.anim.right_out
+                )
                 .commit()
-            return true
+        } else {
+            supportFragmentManager.beginTransaction()
+                .remove(mediaListFragment)
+                .setCustomAnimations(
+                    R.anim.left_in,
+                    R.anim.right_out,
+                    R.anim.left_in,
+                    R.anim.right_out
+                )
+                .commit()
+        }
+
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        when (keyCode) {
+            KeyEvent.KEYCODE_MENU, KeyEvent.KEYCODE_TV_CONTENTS_MENU -> {
+                if (mediaPlayerFragment.isAdded && !mediaListFragment.isAdded) {
+                    showHideMediaListFragment(true)
+                } else {
+                    showHideMediaListFragment(false)
+                }
+                return true
+            }
+
+            KeyEvent.KEYCODE_DPAD_RIGHT -> {
+                // 菜单
+                if (mediaPlayerFragment.isAdded && !mediaListFragment.isAdded) {
+                    showHideMediaListFragment(true)
+                    return true
+                }
+            }
+
+            KeyEvent.KEYCODE_BACK -> {
+                if (mediaListFragment.isAdded) {
+                    showHideMediaListFragment(false)
+                    return true
+                }
+            }
+
+            KeyEvent.KEYCODE_CHANNEL_UP, KeyEvent.KEYCODE_DPAD_UP -> {
+                if (!mediaListFragment.isAdded) {
+                    mediaModel.prev()
+                    return true
+                }
+            }
+
+            KeyEvent.KEYCODE_CHANNEL_DOWN, KeyEvent.KEYCODE_DPAD_DOWN -> {
+                if (!mediaListFragment.isAdded) {
+                    mediaModel.next()
+                    return true
+                }
+            }
         }
         return super.onKeyUp(keyCode, event)
     }
 
-    override fun onStop() {
-        super.onStop()
+
+    override fun onPause() {
+        super.onPause()
         mediaPlayerFragment.pause()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        sendBroadcast(Intent(MediaPlayReceiver.ACTION_DESTROY_EVENT))
     }
 
     private fun showLoading(showLoading: Boolean) {
@@ -90,11 +174,24 @@ class TvActivity : AppCompatActivity() {
 
     class TvMediaListFragment : MediaListFragment() {
         override fun getLayoutManager(context: Context): RecyclerView.LayoutManager {
-//            return FlexboxLayoutManager(context).apply {
-//                flexDirection = FlexDirection.ROW
-//                flexWrap = FlexWrap.WRAP
-//            }
-            return GridLayoutManager(context, 6, RecyclerView.VERTICAL, false)
+            return GridLayoutManager(context, 3, RecyclerView.VERTICAL, false)
+        }
+
+        override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+        ): View {
+            val view = super.onCreateView(inflater, container, savedInstanceState)
+            view.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.media_list_bg))
+            return view
+        }
+
+        @RequiresApi(Build.VERSION_CODES.O)
+        override fun onResume() {
+            super.onResume()
+            view?.isFocusable = true
+            view?.setFocusable(View.FOCUSABLE)
         }
     }
 }

@@ -80,12 +80,14 @@ open class MediaListFragment : Fragment() {
             val mediaAdapter = MediaAdapter(mediaModel.mediaList)
             mediaAdapter.itemClick = object : MediaAdapter.ItemClick {
                 override fun onClick(position: Int) {
-                    mediaModel.selectMediaLiveData.value = mediaModel.mediaList[position]
-                    itemSelected(mediaModel.mediaList[position])
+                    mediaModel.selectMediaItem(position)
                 }
             }
             binding.mediaRecyclerView.layoutManager = getLayoutManager(requireContext())
             binding.mediaRecyclerView.adapter = mediaAdapter
+        }
+        mediaModel.selectMediaLiveData.observe(requireActivity()) {
+            itemSelected(it)
         }
         return binding.root
     }

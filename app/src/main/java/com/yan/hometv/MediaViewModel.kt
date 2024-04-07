@@ -8,7 +8,6 @@ import com.tencent.mmkv.MMKV
 import com.yan.hometv.bean.MediaItem
 import com.yan.hometv.utils.toast
 import com.yan.source.utils.MediaSource
-import com.yan.source.utils.save
 import com.yan.source.utils.setDefault
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -20,6 +19,7 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
     val mediaList = mutableListOf<MediaItem>()
     val selectMediaLiveData = MutableLiveData<MediaItem>()
     val showLoading = MutableLiveData(false)
+    private var currentItem = 0
 
     private val mediaRepo: MediaRepository by lazy {
         MediaRepository()
@@ -27,6 +27,7 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
 
     companion object {
         const val TAG = "MediaViewModel"
+        const val RECENT_MEDIA = "RECENT_MEDIA"
         const val DEFAULT_SOURCE = "default_source_name"
         const val DEFAULT_SOURCE_URL =
             "https://cdn.jsdelivr.net/gh/fanmingming/live@latest/tv/m3u/ipv6.m3u"
@@ -54,7 +55,7 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
     fun loadSource(sourceName: String) = viewModelScope.launch {
         try {
             initSource(MediaSource(sourceName))
-        }catch (e:Exception){
+        } catch (e: Exception) {
             showLoading.value = false
             toast(e.message)
         }
@@ -63,11 +64,42 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
     fun addNewSource(mediaSource: MediaSource) = viewModelScope.launch {
         try {
             initSource(mediaSource)
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
             showLoading.value = false
             toast(e.message)
         }
+    }
+
+    private fun checkPosition(position: Int): Boolean {
+        return (position < (mediaList.size - 1)) && (position >= 0)
+    }
+
+    fun getRecentMediaItem(): MediaItem? {
+        val kv = MMKV.defaultMMKV()
+        return kv.decodeParcelable(RECENT_MEDIA, MediaItem::class.java)
+    }
+
+    fun selectMediaItem(position: Int) {
+        currentItem = if (checkPosition(position)) {
+            position
+        } else {
+            0
+        }
+        if (checkPosition(currentItem)) {
+            selectMediaLiveData.value = mediaList[currentItem]
+            val kv = MMKV.defaultMMKV()
+            kv.encode(RECENT_MEDIA, mediaList[currentItem])
+        }
+
+    }
+
+    fun next() {
+        selectMediaItem(currentItem + 1)
+    }
+
+    fun prev() {
+        selectMediaItem(currentItem - 1)
     }
 
     private suspend fun initSource(mediaSource: MediaSource) = withContext(Dispatchers.IO) {

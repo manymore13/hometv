@@ -11,5 +11,8 @@
         android:layout_height="match_parent"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusedByDefault="true"
         tools:listitem="@layout/media_item" />
 </FrameLayout>

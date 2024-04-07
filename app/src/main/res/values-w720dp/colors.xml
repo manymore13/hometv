@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="media_play_bg">#33000000</color>
+    <color name="media_list_bg">#997E97D6</color>
 </resources>

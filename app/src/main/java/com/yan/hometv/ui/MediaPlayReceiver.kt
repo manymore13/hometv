@@ -11,18 +11,25 @@ import android.media.AudioManager
  * @Description BecomingNoisyReceiver
  * @date 2024/4/7
  */
-abstract class BecomingNoisyReceiver : BroadcastReceiver() {
+abstract class MediaPlayReceiver : BroadcastReceiver() {
 
     companion object {
-        val intentFilter = IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY)
+        const val ACTION_DESTROY_EVENT = "ACTION_DESTROY_EVENT"
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action == AudioManager.ACTION_AUDIO_BECOMING_NOISY) {
-            // Pause the playback
-            onPause()
+        when(intent.action){
+            AudioManager.ACTION_AUDIO_BECOMING_NOISY->{
+                // Pause the playback
+                onPause()
+            }
+            ACTION_DESTROY_EVENT->{
+                onDestroy()
+            }
         }
     }
 
     abstract fun onPause()
+
+    abstract fun onDestroy()
 }

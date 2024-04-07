@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:background="?attr/selectableItemBackground"
+    android:background="@drawable/selector_media_item"
     android:padding="10dp"
     android:stateListAnimator="@animator/view_click_animator">
 
@@ -29,6 +29,8 @@
         android:gravity="center"
         android:singleLine="true"
         android:textAppearance="?attr/textAppearanceHeadline6"
+        android:textColor="@color/colorWhite"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/media_icon"
         app:layout_constraintHorizontal_bias="0.5"

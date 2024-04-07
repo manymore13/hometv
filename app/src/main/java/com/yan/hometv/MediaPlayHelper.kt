@@ -48,7 +48,6 @@ class MediaPlayHelper(private val context: Context) :
 
                 Player.STATE_READY -> {
                     // 播放器准备好
-                    player?.play()
                     canRetryConnect = true
                     val isSupportVideo = player?.currentTracks?.isTypeSupported(C.TRACK_TYPE_VIDEO)
                     Log.d(
@@ -130,13 +129,15 @@ class MediaPlayHelper(private val context: Context) :
                 val player = controllerFuture.get()
                 this.player = player
                 player.addListener(playListener)
+
+                this.sysMediaItem = null
+                outPlayListener?.let { player.addListener(it) }
+                asyncGetPlayer?.let { it(player) }
+
                 this.sysMediaItem?.let {
                     player.setMediaItem(it)
                     player.prepare()
                 }
-                this.sysMediaItem = null
-                outPlayListener?.let { player.addListener(it) }
-                asyncGetPlayer?.let { it(player) }
             },
             MoreExecutors.directExecutor()
         )
@@ -155,6 +156,7 @@ class MediaPlayHelper(private val context: Context) :
         player?.run {
             setMediaItem(sysMediaItem)
             prepare()
+            play()
             Log.d(TAG, "setVideoUrl playbackState =${player?.playbackState}")
         }
     }
