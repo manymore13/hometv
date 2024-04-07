@@ -15,7 +15,6 @@ import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import com.yan.hometv.bean.MediaItem
 import com.yan.hometv.bean.toSysMediaItem
-import com.yan.hometv.ui.MediaPlayService
 import com.yan.hometv.ui.MediaPlayerFragment
 import com.yan.hometv.utils.getErrorCodeName
 import com.yan.hometv.utils.toast
