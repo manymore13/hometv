@@ -85,9 +85,11 @@ class MediaPlayerFragment : Fragment() {
     }
 
     private fun setMediaItem(mediaItem: MediaItem) {
-        mediaPlayHelper.setMediaItem(mediaItem)
-        this.mediaItem = null
-        showMediaInfoToast(mediaItem)
+        if (::mediaPlayHelper.isInitialized) {
+            mediaPlayHelper.setMediaItem(mediaItem)
+            this.mediaItem = null
+            showMediaInfoToast(mediaItem)
+        }
     }
 
     private fun showMediaInfoToast(mediaItem: MediaItem) {
@@ -108,11 +110,15 @@ class MediaPlayerFragment : Fragment() {
     }
 
     fun play() {
-        mediaPlayHelper.play()
+        if (::mediaPlayHelper.isInitialized) {
+            mediaPlayHelper.play()
+        }
     }
 
     fun pause() {
-        mediaPlayHelper.pause()
+        if (::mediaPlayHelper.isInitialized) {
+            mediaPlayHelper.pause()
+        }
     }
 
 }

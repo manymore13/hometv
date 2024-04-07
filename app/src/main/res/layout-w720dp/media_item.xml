@@ -2,42 +2,40 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="?attr/listPreferredItemHeight"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:background="?attr/selectableItemBackground"
-    android:orientation="horizontal"
+    android:padding="10dp"
     android:stateListAnimator="@animator/view_click_animator">
 
     <androidx.constraintlayout.utils.widget.ImageFilterView
         android:id="@+id/media_icon"
         android:layout_width="@dimen/list_item_icon_size"
         android:layout_height="@dimen/list_item_icon_size"
-        android:layout_gravity="center_vertical"
-        android:layout_marginStart="@dimen/list_item_margin_size"
         android:background="@drawable/shape_media_icon_bg"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/media_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.42000002"
         app:round="3dp" />
 
     <TextView
         android:id="@+id/media_name"
-        android:layout_width="wrap_content"
+        android:layout_width="90dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        android:singleLine="true"
         android:textAppearance="?attr/textAppearanceHeadline6"
-        app:layout_constraintBottom_toBottomOf="@+id/media_icon"
-        app:layout_constraintStart_toEndOf="@+id/media_icon"
-        app:layout_constraintTop_toTopOf="@+id/media_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/media_icon"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/media_icon"
+        app:layout_constraintTop_toBottomOf="@+id/media_icon"
         tools:text="Title" />
 
-    <com.google.android.material.divider.MaterialDivider
-        android:layout_width="0dp"
-        android:layout_height="1px"
-        android:background="?attr/dividerHorizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/media_icon"
-        app:layout_constraintRight_toRightOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 

@@ -1,5 +1,7 @@
 package com.yan.hometv.ui
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
@@ -7,21 +9,25 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import com.yan.hometv.MediaViewModel
 import com.yan.hometv.R
-import com.yan.hometv.ui.helper.IMediaDeviceUi
+import com.yan.hometv.databinding.ActivityMainBinding
 import com.yan.source.utils.MediaSource
 
 open class MainActivity : AppCompatActivity() {
 
     companion object {
         const val GROUP_ADD_ID = 520
+        @JvmStatic
+        fun start(context: Context) {
+            val starter = Intent(context, MainActivity::class.java)
+            context.startActivity(starter)
+        }
     }
 
-    private val uiHelper: IMediaDeviceUi by lazy {
-        IMediaDeviceUi.getMediaDevice(this, R.id.media_play, R.id.media_list)
-    }
+    private lateinit var binding: ActivityMainBinding
 
     private val mediaModel by lazy {
         ViewModelProvider(this)[MediaViewModel::class.java]
@@ -29,13 +35,22 @@ open class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(uiHelper.bindView())
-        uiHelper.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.media_list, MediaListFragment())
+            .commit()
+        mediaModel.init()
+
+        mediaModel.showLoading.observe(this) { show ->
+            showLoading(show)
+        }
+    }
+    private fun showLoading(showLoading: Boolean) {
+        binding.load?.isVisible = showLoading
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
-        uiHelper.onKeyUp(keyCode, event)
-
         return super.onKeyUp(keyCode, event)
     }
 
@@ -73,12 +88,6 @@ open class MainActivity : AppCompatActivity() {
             }
         }
 
-    }
-
-    override fun onBackPressed() {
-        if (!uiHelper.onBackReturn()) {
-            super.onBackPressed()
-        }
     }
 
 }

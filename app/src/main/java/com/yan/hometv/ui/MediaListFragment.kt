@@ -1,5 +1,6 @@
 package com.yan.hometv.ui
 
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +11,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.media3.common.Player
 import androidx.media3.common.Player.Listener
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.bumptech.glide.Glide
 import com.yan.hometv.MediaPlayHelper
 import com.yan.hometv.MediaViewModel
@@ -24,7 +26,7 @@ import com.yan.hometv.utils.toast
 /**
  * 节目列表
  */
-class MediaListFragment : Fragment() {
+open class MediaListFragment : Fragment() {
 
     private lateinit var mediaPlayHelper: MediaPlayHelper
     private lateinit var binding: MediaListBinding
@@ -82,20 +84,25 @@ class MediaListFragment : Fragment() {
                     itemSelected(mediaModel.mediaList[position])
                 }
             }
-            binding.mediaRecyclerView.layoutManager =
-                LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            binding.mediaRecyclerView.layoutManager = getLayoutManager(requireContext())
             binding.mediaRecyclerView.adapter = mediaAdapter
         }
         return binding.root
+    }
+
+    protected open fun getLayoutManager(context: Context): LayoutManager {
+        return LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
     }
 
     var mediaItem: MediaItem? = null
 
     private fun itemSelected(mediaItem: MediaItem) {
         this.mediaItem = mediaItem
-        binding.mediaPlayInfo?.tvMediaInfo?.text = ""
-        showMediaInfo(mediaItem)
-        mediaPlayHelper.setMediaItem(mediaItem)
+        if (binding.mediaPlayInfo != null) {
+            binding.mediaPlayInfo?.tvMediaInfo?.text = ""
+            showMediaInfo(mediaItem)
+            mediaPlayHelper.setMediaItem(mediaItem)
+        }
     }
 
     private fun showMediaInfo(mediaItem: MediaItem, isPlaying: Boolean = false) {
