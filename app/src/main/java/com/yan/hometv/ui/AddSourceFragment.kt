@@ -11,18 +11,25 @@ import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.yan.hometv.MediaViewModel
 import com.yan.hometv.R
+import com.yan.hometv.wifi.SimpleWebServer
 import com.yan.source.utils.MediaSource
 
 class AddSourceFragment : DialogFragment() {
 
-//    private var mediaModel: MediaViewModel? = null
+    private var sourceNameEt: EditText? = null
+
+    private var sourceUrlEt: EditText? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-//        mediaModel = ViewModelProvider(requireActivity())[MediaViewModel::class.java]
+        val simpleWebServer = SimpleWebServer(8888) { sourceName, sourceUrl ->
+            sourceNameEt?.setText(sourceName)
+            sourceUrlEt?.setText(sourceUrl)
+        }
+        lifecycle.addObserver(simpleWebServer)
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
@@ -41,7 +48,9 @@ class AddSourceFragment : DialogFragment() {
             // layout.
             val v = inflater.inflate(R.layout.dialog_add_source, null)
             val sourceNameEt = v.findViewById<EditText>(R.id.source_name)
+            this.sourceNameEt = sourceNameEt
             val sourceUrlEt = v.findViewById<EditText>(R.id.source_url)
+            this.sourceUrlEt = sourceUrlEt
             builder.setView(v)
                 // Add action buttons.
                 .setPositiveButton(

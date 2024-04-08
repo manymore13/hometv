@@ -47,7 +47,7 @@ open class MainActivity : AppCompatActivity() {
         }
     }
     private fun showLoading(showLoading: Boolean) {
-        binding.load?.isVisible = showLoading
+        binding.load.isVisible = showLoading
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {

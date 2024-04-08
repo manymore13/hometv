@@ -17,18 +17,6 @@ class MediaRepository {
         const val tvSourceKey = "tv_cache_source"
     }
 
-//    suspend fun getSource(): MutableMap<String, MutableList<M3uEntry>> {
-//        val mediaMap = mutableMapOf<String, MutableList<M3uEntry>>()
-//        val sourceUrl = "https://cdn.jsdelivr.net/gh/fanmingming/live@latest/tv/m3u/ipv6.m3u"
-//        val m3uEntryList = getMediaSource(sourceUrl)
-//        m3uEntryList?.forEach { m3uEntry ->
-//            val iconUrl = ""
-//            val mediaSource = ""
-//            m3uEntry.location
-//        }
-//        return mediaMap
-//    }
-
     /**
      * 是否需要从网络上拉取资源
      */

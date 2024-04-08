@@ -1,9 +1,13 @@
 package com.yan.hometv.utils
 
+import android.content.Context
+import android.net.wifi.WifiManager
+import android.text.format.Formatter
 import android.widget.Toast
 import com.yan.hometv.App
 import java.math.BigInteger
 import java.security.MessageDigest
+
 
 fun String.md5(): String {
     val md5 = MessageDigest.getInstance("MD5")
@@ -15,4 +19,13 @@ fun toast(str: String?) {
         return
     }
     Toast.makeText(App.getContext(), str, Toast.LENGTH_LONG).show()
+}
+
+fun getCurrentIPAddress(context: Context): String? {
+    val wifiManager = context.getSystemService(Context.WIFI_SERVICE) as WifiManager
+    if (wifiManager != null && wifiManager.connectionInfo != null) {
+        val ipAddress = wifiManager.connectionInfo.ipAddress
+        return Formatter.formatIpAddress(ipAddress)
+    }
+    return "Unavailable"
 }
