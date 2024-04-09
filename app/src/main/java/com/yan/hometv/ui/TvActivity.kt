@@ -2,8 +2,6 @@ package com.yan.hometv.ui
 
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
-import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
@@ -16,13 +14,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.yan.hometv.MediaViewModel
 import com.yan.hometv.R
 import com.yan.hometv.bean.MediaItem
 import com.yan.hometv.databinding.ActivityTvMainBinding
+import com.yan.hometv.ui.medialist.MediaListFragment
+import com.yan.hometv.ui.mediaplayer.MediaPlayReceiver
+import com.yan.hometv.ui.mediaplayer.MediaPlayerFragment
+import com.yan.hometv.ui.mediaplayer.PlayerActivity
 
 /**
  * @author manymore13

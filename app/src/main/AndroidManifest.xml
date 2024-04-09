@@ -48,7 +48,7 @@
 
         </activity>
         <activity
-            android:name=".ui.PlayerActivity"
+            android:name=".ui.mediaplayer.PlayerActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.Full" />
@@ -65,6 +65,11 @@
             </intent-filter>
 
         </activity>
+
+        <activity
+            android:name=".ui.setting.SettingActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:theme="@style/Theme.HomeTV" />
 
         <service
             android:name=".MediaPlayService"

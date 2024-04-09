@@ -6,11 +6,12 @@
     android:layout_height="match_parent"
     android:background="@color/primary_dark">
 
-    <ImageView
+    <androidx.constraintlayout.utils.widget.ImageFilterView
         android:id="@+id/imageView"
         android:layout_width="@dimen/splash_icon_size"
         android:layout_height="@dimen/splash_icon_size"
         android:src="@mipmap/ic_launcher"
+        app:round="3dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

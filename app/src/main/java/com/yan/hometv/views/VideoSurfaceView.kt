@@ -1,4 +1,4 @@
-package com.yan.hometv.widget
+package com.yan.hometv.views
 
 import android.content.Context
 import android.util.AttributeSet

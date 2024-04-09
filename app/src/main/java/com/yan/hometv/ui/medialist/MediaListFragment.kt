@@ -1,4 +1,4 @@
-package com.yan.hometv.ui
+package com.yan.hometv.ui.medialist
 
 import android.content.Context
 import android.os.Bundle
@@ -20,6 +20,7 @@ import com.yan.hometv.adapter.MediaAdapter
 import com.yan.hometv.bean.MediaItem
 import com.yan.hometv.bean.toMediaItem
 import com.yan.hometv.databinding.MediaListBinding
+import com.yan.hometv.ui.mediaplayer.PlayerActivity
 import com.yan.hometv.utils.toast
 
 

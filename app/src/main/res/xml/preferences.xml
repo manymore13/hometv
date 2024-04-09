@@ -1,0 +1,16 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ListPreference
+        app:entries="@array/entries_array"
+        app:entryValues="@array/entry_values_array"
+        app:allowDividerAbove="true"
+        app:summary="@string/media_source_summary"
+        app:key="@string/media_source_key"
+        app:title="@string/media_source_title" />
+
+    <Preference
+        app:key="feedback"
+        app:summary="Report technical issues or suggest new features"
+        app:title="Send feedback" />
+
+</PreferenceScreen>

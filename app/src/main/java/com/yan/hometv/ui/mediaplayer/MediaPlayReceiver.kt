@@ -1,9 +1,8 @@
-package com.yan.hometv.ui
+package com.yan.hometv.ui.mediaplayer
 
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.media.AudioManager
 
 /**
@@ -23,7 +22,7 @@ abstract class MediaPlayReceiver : BroadcastReceiver() {
                 // Pause the playback
                 onPause()
             }
-            ACTION_DESTROY_EVENT->{
+            ACTION_DESTROY_EVENT ->{
                 onDestroy()
             }
         }

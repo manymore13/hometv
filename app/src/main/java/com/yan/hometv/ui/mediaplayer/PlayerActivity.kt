@@ -1,4 +1,4 @@
-package com.yan.hometv.ui
+package com.yan.hometv.ui.mediaplayer
 
 import android.content.Context
 import android.content.Intent

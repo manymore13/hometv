@@ -14,6 +14,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.yan.hometv.MediaViewModel
 import com.yan.hometv.R
 import com.yan.hometv.databinding.ActivityMainBinding
+import com.yan.hometv.ui.medialist.MediaListFragment
+import com.yan.hometv.ui.setting.SettingActivity
 import com.yan.source.utils.MediaSource
 
 open class MainActivity : AppCompatActivity() {
@@ -78,7 +80,7 @@ open class MainActivity : AppCompatActivity() {
                 }
 
                 R.id.setting -> {
-                    Toast.makeText(this, "开发中...", Toast.LENGTH_SHORT).show()
+                    SettingActivity.start(this)
                     true
                 }
 

@@ -1,4 +1,4 @@
-package com.yan.hometv.ui
+package com.yan.hometv.ui.mediaplayer
 
 import android.os.Bundle
 import android.transition.TransitionManager
