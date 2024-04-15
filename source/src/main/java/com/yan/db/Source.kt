@@ -15,5 +15,5 @@ class Source(
 ) {
     @PrimaryKey(true)
     @ColumnInfo(name = "source_id")
-    var id: Int = 0
+    var id: Long = 0
 }

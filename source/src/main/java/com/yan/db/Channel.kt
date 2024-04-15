@@ -3,6 +3,7 @@ package com.yan.db
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 
 @Entity(
@@ -23,9 +24,12 @@ class Channel(
     val icon: String?,
 
     @ColumnInfo(name = "source_id", index = true)
-    val sourceId: Int
+    val sourceId: Long,
+
+    @ColumnInfo(name = "group_name")
+    val groupName: String,
 ) {
     @PrimaryKey(true)
     @ColumnInfo(name = "channel_id")
-    var id: Int = 0
+    var id: Long = 0
 }

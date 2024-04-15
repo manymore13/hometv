@@ -7,7 +7,6 @@ import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
@@ -16,7 +15,7 @@ import com.yan.hometv.R
 import com.yan.hometv.databinding.ActivityMainBinding
 import com.yan.hometv.ui.medialist.MediaListFragment
 import com.yan.hometv.ui.setting.SettingActivity
-import com.yan.source.utils.MediaSource
+import com.yan.source.MediaSource
 
 open class MainActivity : AppCompatActivity() {
 
@@ -70,7 +69,7 @@ open class MainActivity : AppCompatActivity() {
         val groupId = item.groupId
         if (groupId == GROUP_ADD_ID) {
             val title = item.title
-            mediaModel.loadSource(title.toString())
+//            mediaModel.loadSource(title.toString())
             return true
         } else {
             return when (item.itemId) {

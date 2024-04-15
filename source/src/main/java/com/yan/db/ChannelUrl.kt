@@ -22,10 +22,10 @@ import androidx.room.ForeignKey
 class ChannelUrl(
 
     @ColumnInfo(name = "channel_id", index = true)
-    val channelId: Int,
+    val channelId: Long,
 
     @ColumnInfo(name = "source_id", index = true)
-    val sourceId: Int,
+    val sourceId: Long,
 
     @ColumnInfo(name = "channel_url")
     val url: String

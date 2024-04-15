@@ -5,10 +5,12 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.tencent.mmkv.MMKV
+import com.yan.db.Source
 import com.yan.hometv.bean.MediaItem
 import com.yan.hometv.utils.toast
-import com.yan.source.utils.MediaSource
-import com.yan.source.utils.setDefault
+import com.yan.source.MediaSource
+import com.yan.source.SourceHelper
+import com.yan.source.setDefault
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -19,6 +21,7 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
     val mediaList = mutableListOf<MediaItem>()
     val selectMediaLiveData = MutableLiveData<MediaItem>()
     val showLoading = MutableLiveData(false)
+    private val sourceHelper = SourceHelper(application)
     private var currentItem = 0
 
     private val mediaRepo: MediaRepository by lazy {
@@ -36,20 +39,8 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun init() = viewModelScope.launch {
-        val defaultSourceName = MediaSource.getDefaultSourceName()
-        val defaultSource: MediaSource
-        if (defaultSourceName.isEmpty()) {
-            defaultSource = MediaSource(DEFAULT_SOURCE_NAME, DEFAULT_SOURCE_URL)
-        } else {
-            defaultSource = MediaSource(defaultSourceName)
-        }
-        try {
-            initSource(defaultSource)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            showLoading.value = false
-            toast(e.message)
-        }
+        val url = "https://cdn.jsdelivr.net/gh/fanmingming/live@latest/tv/m3u/ipv6.m3u"
+        sourceHelper.initSource(Source("fanmingming", url))
     }
 
     fun loadSource(sourceName: String) = viewModelScope.launch {

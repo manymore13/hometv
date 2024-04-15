@@ -5,7 +5,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.yan.db.Channel
 import com.yan.db.DatabaseManager
 import com.yan.db.Source
-import com.yan.source.utils.request
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -30,7 +29,6 @@ class ExampleInstrumentedTest {
         assertEquals("com.yan.source.test", appContext.packageName)
     }
 
-    @Test
     fun testHttp() {
         runBlocking {
             val url = "https://live.fanmingming.com/tv/m3u/ipv6.m3u"
@@ -46,7 +44,7 @@ class ExampleInstrumentedTest {
                 System.out.println("sourceId: $sourceId")
                 val channelList  = mutableListOf<Channel>()
                 m3uEntryList.forEach {
-                    channelList.add(Channel(it.title?:"", it.metadata["tvg-logo"]?:"", sourceId.toInt()))
+                    channelList.add(Channel(it.title?:"", it.metadata["tvg-logo"]?:"", sourceId,""))
                 }
                 channelDao.insertChannels(channelList)
                 assertEquals(m3uEntryList, null)
