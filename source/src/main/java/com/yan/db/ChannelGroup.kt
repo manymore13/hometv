@@ -14,13 +14,9 @@ import androidx.room.PrimaryKey
         onDelete = ForeignKey.CASCADE
     )]
 )
-data class ChannelGroup(
+class ChannelGroup(
 
-    @PrimaryKey(true)
-    @ColumnInfo(name = "group_id")
-    val id: Int,
-
-    @ColumnInfo(name = "source_id")
+    @ColumnInfo(name = "source_id", index = true)
     val sourceId: Int,
 
     @ColumnInfo(name = "channel_id")
@@ -28,4 +24,8 @@ data class ChannelGroup(
 
     @ColumnInfo(name = "group_name")
     val name: String,
-)
+) {
+    @PrimaryKey(true)
+    @ColumnInfo(name = "group_id")
+    var id: Int = 0
+}

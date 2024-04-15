@@ -5,7 +5,7 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [Source::class, Channel::class, ChannelGroup::class, ChannelUrl::class],
-    views = [ChannelDetail::class],
+    views = [ChannelDetail::class], exportSchema = false,
     version = 1
 )
 abstract class AppDataBase : RoomDatabase() {

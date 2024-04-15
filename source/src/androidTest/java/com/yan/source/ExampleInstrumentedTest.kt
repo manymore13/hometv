@@ -2,6 +2,9 @@ package com.yan.source
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.yan.db.Channel
+import com.yan.db.DatabaseManager
+import com.yan.db.Source
 import com.yan.source.utils.request
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -28,13 +31,26 @@ class ExampleInstrumentedTest {
     }
 
     @Test
-    fun testHttp(){
+    fun testHttp() {
         runBlocking {
             val url = "https://live.fanmingming.com/tv/m3u/ipv6.m3u"
             val m3uFile = request(url)
             val m3uEntryList = M3uParser.parse(m3uFile)
             println("$m3uFile")
-            assertEquals(m3uEntryList,null)
+            val appContext = InstrumentationRegistry.getInstrumentation().targetContext
+
+            val db = DatabaseManager.getInstance(appContext)
+            val channelDao = db.getChannelDao()
+            GlobalScope.launch {
+                val sourceId = channelDao.insertSource(Source("默认源", url))
+                System.out.println("sourceId: $sourceId")
+                val channelList  = mutableListOf<Channel>()
+                m3uEntryList.forEach {
+                    channelList.add(Channel(it.title?:"", it.metadata["tvg-logo"]?:"", sourceId.toInt()))
+                }
+                channelDao.insertChannels(channelList)
+                assertEquals(m3uEntryList, null)
+            }
         }
 
     }

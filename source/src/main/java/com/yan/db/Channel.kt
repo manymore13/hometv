@@ -16,16 +16,16 @@ import androidx.room.PrimaryKey
 )
 class Channel(
 
-    @PrimaryKey(true)
-    @ColumnInfo(name = "channel_id")
-    val id: Int,
-
     @ColumnInfo(name = "channel_name")
     val name: String,
 
     @ColumnInfo(name = "channel_icon")
     val icon: String?,
 
-    @ColumnInfo(name = "source_id")
+    @ColumnInfo(name = "source_id", index = true)
     val sourceId: Int
-)
+) {
+    @PrimaryKey(true)
+    @ColumnInfo(name = "channel_id")
+    var id: Int = 0
+}

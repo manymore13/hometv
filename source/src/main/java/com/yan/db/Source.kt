@@ -5,14 +5,15 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "source")
-data class Source(
-    @PrimaryKey(true)
-    @ColumnInfo(name = "source_id")
-    val id: Int,
+class Source(
 
     @ColumnInfo(name = "source_name")
     val name: String,
 
     @ColumnInfo(name = "source_url")
-    val url:String
-)
+    val url: String
+) {
+    @PrimaryKey(true)
+    @ColumnInfo(name = "source_id")
+    var id: Int = 0
+}
