@@ -49,6 +49,9 @@ class MediaPlayHelper(private val context: Context) :
                 Player.STATE_READY -> {
                     // 播放器准备好
                     canRetryConnect = true
+                    if (player?.playWhenReady == true) {
+                        player?.play()
+                    }
                     val isSupportVideo = player?.currentTracks?.isTypeSupported(C.TRACK_TYPE_VIDEO)
                     Log.d(
                         MediaPlayerFragment.TAG,
@@ -192,10 +195,16 @@ class MediaPlayHelper(private val context: Context) :
     }
 
     fun play() {
-        player?.play()
+        if (player?.isCommandAvailable(Player.COMMAND_PLAY_PAUSE) == true) {
+            player?.play()
+        } else if (player?.isCommandAvailable(Player.COMMAND_PREPARE) == true) {
+            player?.prepare()
+        }
     }
 
     fun pause() {
-        player?.pause()
+        if (player?.isCommandAvailable(Player.COMMAND_PLAY_PAUSE) == true) {
+            player?.stop()
+        }
     }
 }

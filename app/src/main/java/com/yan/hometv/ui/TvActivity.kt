@@ -135,7 +135,7 @@ class TvActivity : AppCompatActivity() {
                 return true
             }
 
-            KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_TV_CONTENTS_MENU -> {
+            KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_DPAD_CENTER, KeyEvent.KEYCODE_TV_CONTENTS_MENU -> {
                 if (mediaPlayerFragment.isAdded && !mediaListFragment.isAdded) {
                     showHideMediaListFragment(true)
                 } else {
@@ -180,6 +180,11 @@ class TvActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         mediaPlayerFragment.pause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        mediaPlayerFragment.play()
     }
 
     override fun onDestroy() {
