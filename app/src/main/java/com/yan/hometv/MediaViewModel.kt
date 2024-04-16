@@ -15,6 +15,7 @@ import com.yan.hometv.utils.getAppSharedPreferences
 import com.yan.hometv.utils.isNeedRefreshData
 import com.yan.hometv.utils.toast
 import com.yan.source.SourceHelper
+import com.yan.source.db.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
@@ -53,6 +54,17 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
 
     suspend fun getAllSource(): MutableList<Source> {
         return sourceHelper.getAllSource()
+    }
+
+    suspend fun getMediaItemByChannelId(channelId: Long):MediaItem? {
+        var url = ""
+        val urls = sourceHelper.getChannelUrlByChannelId(channelId)
+        if (urls.isNotEmpty()) {
+            url = urls[0].url
+        }
+        return sourceHelper.getChannelById(channelId)?.toMediaItem()?.apply {
+            mediaUrl = url
+        }
     }
 
     fun deleteSources(sourceList: MutableList<Source>) = viewModelScope.launch {

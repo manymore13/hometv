@@ -61,6 +61,7 @@ class SourceHelper(val context: Context) {
     suspend fun getAllSource(): MutableList<Source> {
         return channelDao.getAllSource()
     }
+
     suspend fun deleteSources(sourceList: MutableList<Source>): Int {
         return channelDao.deleteSources(sourceList)
     }
@@ -68,6 +69,11 @@ class SourceHelper(val context: Context) {
     suspend fun getChannelUrlByChannelId(channelId: Long): MutableList<ChannelUrl> {
         return channelDao.getChannelUrls(channelId)
     }
+
+    suspend fun getChannelById(channelId: Long): Channel? {
+        return channelDao.getChannelById(channelId)
+    }
+
 
     /**
      * 处理源和频道的更新

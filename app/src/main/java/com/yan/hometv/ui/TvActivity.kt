@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.yan.hometv.MediaViewModel
@@ -24,6 +25,8 @@ import com.yan.hometv.ui.medialist.MediaListFragment
 import com.yan.hometv.ui.mediaplayer.MediaPlayReceiver
 import com.yan.hometv.ui.mediaplayer.MediaPlayerFragment
 import com.yan.hometv.ui.mediaplayer.PlayerActivity
+import com.yan.source.utils.kv
+import kotlinx.coroutines.launch
 
 /**
  * @author manymore13
@@ -74,7 +77,16 @@ class TvActivity : AppCompatActivity() {
             showLoading(show)
         }
         mediaModel.complete.observe(this) {
-            playMediaItem(mediaModel.mediaList[0])
+            lifecycleScope.launch {
+                val channelId = kv.decodeLong(MediaViewModel.RECENT_MEDIA, 0)
+                val mediaItem = mediaModel.getMediaItemByChannelId(channelId)
+                if (mediaItem != null) {
+                    playMediaItem(mediaItem)
+                } else {
+                    mediaModel.selectMediaItem(0)
+                }
+            }
+
         }
 
         mediaModel.selectMediaLiveData.observe(this) {

@@ -50,6 +50,9 @@ abstract class ChannelDao {
     @Query("SELECT * FROM channel WHERE source_id = :sourceId")
     abstract suspend fun getChannelBySourceId(sourceId: Long): MutableList<Channel>
 
+    @Query("SELECT * FROM channel WHERE channel_id = :channelId")
+    abstract suspend fun getChannelById(channelId: Long): Channel?
+
     @Query("SELECT count(*)  FROM channel WHERE source_id = :sourceId")
     abstract suspend fun countChannel(sourceId: Long): Long
 }
