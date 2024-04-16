@@ -27,11 +27,12 @@ class SimpleWebServer(
 
     override fun serve(session: IHTTPSession): Response {
         val uri = session.uri
-        return if (uri.equals("source")) {
+        return if (uri.startsWith("/source")) {
             val params = session.parameters
-            val sourceName = params["name"]
-            val sourceNet = params["url"]
-            newFixedLengthResponse("Message received: " + sourceName);
+            val sourceName = params["name"]?.get(0) ?: "sourceName"
+            val sourceNet = params["url"]?.get(0) ?: "sourceNet"
+            serverReceiver(sourceName, sourceNet)
+            newFixedLengthResponse("Message received: $sourceName");
         } else {
             newFixedLengthResponse(
                 Response.Status.NOT_FOUND,

@@ -9,13 +9,18 @@
         app:title="@string/media_source_summary" />
 
     <Preference
-        app:key="@string/source_edit_key"
-        app:summary="@string/source_edit_summary"
-        app:title="@string/source_edit_title" />
+        app:key="@string/source_add_key"
+        app:summary="@string/source_add_summary"
+        app:title="@string/source_add_title" />
+
+    <Preference
+        app:key="@string/source_delete_key"
+        app:summary="@string/source_delete_summary"
+        app:title="@string/source_delete_title" />
 
     <Preference
         app:key="feedback"
-        app:summary="Report technical issues or suggest new features"
-        app:title="Send feedback" />
+        app:summary="有啥意见赶紧反馈吧"
+        app:title="意见反馈" />
 
 </PreferenceScreen>

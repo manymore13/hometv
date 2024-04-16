@@ -6,19 +6,33 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.yan.hometv.MediaViewModel
 import com.yan.hometv.R
+import com.yan.hometv.utils.getIpAddress
 import com.yan.hometv.wifi.SimpleWebServer
 import com.yan.source.db.Source
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class AddSourceFragment : DialogFragment() {
 
     private var sourceNameEt: EditText? = null
 
     private var sourceUrlEt: EditText? = null
+
+    private var serviceTv: TextView? = null
+        set(value) {
+            field = value
+            lifecycleScope.launch {
+                val ipAddress = getIpAddress(requireContext())
+                serviceTv?.text = "当前地址：$ipAddress:8888"
+            }
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,9 +51,8 @@ class AddSourceFragment : DialogFragment() {
 
         val mediaModel = ViewModelProvider(requireActivity())[MediaViewModel::class.java]
 
-
         return activity?.let {
-            val builder = AlertDialog.Builder(it)
+            val builder = AlertDialog.Builder(it).setTitle(R.string.source_add_title)
             // Get the layout inflater.
             val inflater = requireActivity().layoutInflater;
 
@@ -51,6 +64,7 @@ class AddSourceFragment : DialogFragment() {
             this.sourceNameEt = sourceNameEt
             val sourceUrlEt = v.findViewById<EditText>(R.id.source_url)
             this.sourceUrlEt = sourceUrlEt
+            this.serviceTv = v.findViewById<TextView>(R.id.service_info)
             builder.setView(v)
                 // Add action buttons.
                 .setPositiveButton(

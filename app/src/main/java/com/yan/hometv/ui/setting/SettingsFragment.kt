@@ -8,6 +8,7 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import com.yan.hometv.MediaViewModel
 import com.yan.hometv.R
+import com.yan.hometv.ui.AddSourceFragment
 import com.yan.hometv.ui.SourceEditFragment
 import com.yan.hometv.ui.SourceEditFragment.Companion.SOURCE_LIST
 import com.yan.hometv.utils.SOURCE_UPDATE_TIME_KEY
@@ -34,7 +35,8 @@ class SettingsFragment : BasePreferenceFragment() {
         setPreferencesFromResource(R.xml.preferences, rootKey)
 
         initCurrentSource()
-        initEditSource()
+        initAddSource()
+        initDeleteSource()
     }
 
     private fun initCurrentSource() {
@@ -54,10 +56,10 @@ class SettingsFragment : BasePreferenceFragment() {
         }
     }
 
-    private fun initEditSource() {
+    private fun initDeleteSource() {
 
         val preference =
-            preferenceManager.findPreference<Preference>(getString(R.string.source_edit_key))
+            preferenceManager.findPreference<Preference>(getString(R.string.source_delete_key))
         preference?.setOnPreferenceClickListener {
             val mediaModel = ViewModelProvider(requireActivity())[MediaViewModel::class.java]
 
@@ -78,4 +80,16 @@ class SettingsFragment : BasePreferenceFragment() {
         }
 
     }
+
+    private fun initAddSource() {
+
+        val preference =
+            preferenceManager.findPreference<Preference>(getString(R.string.source_add_key))
+        preference?.setOnPreferenceClickListener {
+            AddSourceFragment().show(childFragmentManager, "add_source")
+            true
+        }
+
+    }
+
 }

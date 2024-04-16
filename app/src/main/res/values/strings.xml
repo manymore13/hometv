@@ -19,9 +19,16 @@
 
     <string name="media_source_title">一天</string>
     <string name="media_source_summary">多久更新一次源</string>
-    <string name="source_edit_key">source_edit_key</string>
-    <string name="source_edit_title">编辑源</string>
-    <string name="source_edit_summary">可以对源进行删除操作</string>
+
+    <string name="source_add_key">source_add_key</string>
+    <string name="source_add_title">添加源</string>
+    <string name="source_add_summary">可以添加新的源</string>
+
+    <string name="source_delete_key">source_delete_key</string>
+    <string name="source_delete_title">删除源</string>
+    <string name="source_delete_summary">可以对源进行删除操作</string>
+
+
     <string name="source_update_time_key">source_update_time</string>
     <string-array name="entries_source_update_time_array">
         <item>一天</item>

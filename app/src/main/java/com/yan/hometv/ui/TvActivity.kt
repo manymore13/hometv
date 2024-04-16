@@ -25,6 +25,7 @@ import com.yan.hometv.ui.medialist.MediaListFragment
 import com.yan.hometv.ui.mediaplayer.MediaPlayReceiver
 import com.yan.hometv.ui.mediaplayer.MediaPlayerFragment
 import com.yan.hometv.ui.mediaplayer.PlayerActivity
+import com.yan.hometv.ui.setting.SettingActivity
 import com.yan.source.utils.kv
 import kotlinx.coroutines.launch
 
@@ -129,7 +130,12 @@ class TvActivity : AppCompatActivity() {
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
         when (keyCode) {
-            KeyEvent.KEYCODE_MENU, KeyEvent.KEYCODE_TV_CONTENTS_MENU -> {
+            KeyEvent.KEYCODE_MENU -> {
+                SettingActivity.start(this)
+                return true
+            }
+
+            KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_TV_CONTENTS_MENU -> {
                 if (mediaPlayerFragment.isAdded && !mediaListFragment.isAdded) {
                     showHideMediaListFragment(true)
                 } else {
