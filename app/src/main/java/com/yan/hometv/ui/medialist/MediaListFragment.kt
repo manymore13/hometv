@@ -77,7 +77,7 @@ open class MediaListFragment : Fragment() {
             }
         }
         val mediaModel = ViewModelProvider(requireActivity())[MediaViewModel::class.java]
-        mediaModel.complete.observe(requireActivity()) {
+        mediaModel.complete.observe(viewLifecycleOwner) {
             val mediaAdapter = MediaAdapter(mediaModel.mediaList)
             mediaAdapter.itemClick = object : MediaAdapter.ItemClick {
                 override fun onClick(position: Int) {
@@ -87,7 +87,7 @@ open class MediaListFragment : Fragment() {
             binding.mediaRecyclerView.layoutManager = getLayoutManager(requireContext())
             binding.mediaRecyclerView.adapter = mediaAdapter
         }
-        mediaModel.selectMediaLiveData.observe(requireActivity()) {
+        mediaModel.selectMediaLiveData.observe(viewLifecycleOwner) {
             itemSelected(it)
         }
         return binding.root

@@ -10,17 +10,21 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.yan.hometv.MediaViewModel
 import com.yan.hometv.R
 import com.yan.hometv.databinding.ActivityMainBinding
 import com.yan.hometv.ui.medialist.MediaListFragment
 import com.yan.hometv.ui.setting.SettingActivity
-import com.yan.source.MediaSource
+import kotlinx.coroutines.launch
 
 open class MainActivity : AppCompatActivity() {
 
+    private var menu: Menu? = null
+
     companion object {
         const val GROUP_ADD_ID = 520
+
         @JvmStatic
         fun start(context: Context) {
             val starter = Intent(context, MainActivity::class.java)
@@ -38,15 +42,15 @@ open class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.media_list, MediaListFragment())
+        supportFragmentManager.beginTransaction().replace(R.id.media_list, MediaListFragment())
             .commit()
-        mediaModel.init()
+        mediaModel.initSource()
 
         mediaModel.showLoading.observe(this) { show ->
             showLoading(show)
         }
     }
+
     private fun showLoading(showLoading: Boolean) {
         binding.load.isVisible = showLoading
     }
@@ -56,12 +60,19 @@ open class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        this.menu = menu
         val inflater: MenuInflater = menuInflater
-        val sourceNameSet = MediaSource.getSourceNameList()
-        sourceNameSet?.forEach { sourceName ->
-            menu.add(GROUP_ADD_ID, 1, 0, sourceName)
-        }
         inflater.inflate(R.menu.media_menu, menu)
+
+        lifecycleScope.launch {
+            mediaModel.getAllSourceFlow().collect { sources ->
+                menu.removeGroup(GROUP_ADD_ID)
+                sources.forEach { source ->
+                    val id = source.id.toInt()
+                    menu.add(GROUP_ADD_ID, id, id, source.name)
+                }
+            }
+        }
         return true
     }
 
@@ -69,7 +80,8 @@ open class MainActivity : AppCompatActivity() {
         val groupId = item.groupId
         if (groupId == GROUP_ADD_ID) {
             val title = item.title
-//            mediaModel.loadSource(title.toString())
+            val id = item.itemId
+            mediaModel.loadChannels(id.toLong())
             return true
         } else {
             return when (item.itemId) {

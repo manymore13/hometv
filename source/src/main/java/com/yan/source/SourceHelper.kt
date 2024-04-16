@@ -1,10 +1,14 @@
 package com.yan.source
 
 import android.content.Context
-import com.yan.db.Channel
-import com.yan.db.ChannelDao
-import com.yan.db.DatabaseManager
-import com.yan.db.Source
+import android.util.Log
+import com.yan.source.db.Channel
+import com.yan.source.db.ChannelDao
+import com.yan.source.db.ChannelUrl
+import com.yan.source.db.DatabaseManager
+import com.yan.source.db.Source
+import com.yan.source.utils.request
+import kotlinx.coroutines.flow.Flow
 import net.bjoernpetersen.m3u.M3uParser
 
 class SourceHelper(val context: Context) {
@@ -13,37 +17,79 @@ class SourceHelper(val context: Context) {
         DatabaseManager.getInstance(context).getChannelDao()
     }
 
-    private suspend fun flushSource(sourceId: Long) {
-        val source = channelDao.getSourceById(sourceId) ?: return
+    private suspend fun refreshSource(source: Source) {
+        Log.d("SourceHelper", "refresh source: $source")
+        val sourceId: Long = source.id
         val m3uStr = request(source.url)
         val m3uEntryList = M3uParser.parse(m3uStr)
         val channelList = mutableListOf<Channel>()
+        val channelUrl = mutableListOf<ChannelUrl>()
         m3uEntryList.forEach {
             val iconUrl = it.metadata["tvg-logo"]
             val groupTitle = it.metadata["group-title"] ?: ""
             val channelName = it.title ?: ""
-            if (channelName.isBlank()) {
+            val url = it.location
+            if (channelName.isBlank() || url.toString().isBlank()) {
                 return@forEach
             }
+            channelUrl.add(
+                ChannelUrl(0, url.toString())
+            )
             channelList.add(
                 Channel(channelName, iconUrl, sourceId, groupTitle)
             )
         }
-        channelDao.insertChannels(channelList)
+        val ids = channelDao.insertChannels(channelList)
+        ids.forEachIndexed { index, id ->
+            channelUrl[index].channelId = id
+        }
+        channelDao.insertChannelUrl(channelUrl)
     }
 
-    suspend fun initSource(source: Source) {
-        val dbSource = channelDao.getSourceByName(sourceName = source.name)
-        var sourceId = 0L
-        if (dbSource != null) {
-            // 存在源
-            sourceId = dbSource.id
+    suspend fun getSourceByName(sourceName: String): Source? {
+        return channelDao.getSourceByName(sourceName)
+    }
 
+    suspend fun getSourceById(sourceId: Long): Source? {
+        return channelDao.getSourceById(sourceId)
+    }
+
+    fun getAllSourceFlow(): Flow<MutableList<Source>> {
+        return channelDao.getAllSourceFlow()
+    }
+
+    suspend fun getAllSource(): MutableList<Source> {
+        return channelDao.getAllSource()
+    }
+    suspend fun deleteSources(sourceList: MutableList<Source>): Int {
+        return channelDao.deleteSources(sourceList)
+    }
+
+    suspend fun getChannelUrlByChannelId(channelId: Long): MutableList<ChannelUrl> {
+        return channelDao.getChannelUrls(channelId)
+    }
+
+    /**
+     * 处理源和频道的更新
+     */
+    suspend fun manageSourceRefresh(source: Source, refresh: Boolean = true) {
+        val sourceId: Long = if (source.refreshTime == 0L) {
+            channelDao.insertSource(source.apply {
+                refreshTime = System.currentTimeMillis()
+            })
         } else {
-            // 不存在源
-            sourceId = channelDao.insertSource(source)
+            source.id
         }
-        flushSource(sourceId)
+        val countChannel = channelDao.countChannel(sourceId)
+        if (countChannel == 0L || refresh) {
+            refreshSource(source.apply {
+                id = sourceId
+            })
+        }
+    }
+
+    suspend fun getAllChannels(sourId: Long): MutableList<Channel> {
+        return channelDao.getChannelBySourceId(sourId)
     }
 
 }

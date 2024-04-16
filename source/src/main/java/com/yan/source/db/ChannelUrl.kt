@@ -1,18 +1,13 @@
-package com.yan.db
+package com.yan.source.db
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "channelUrl",
-    primaryKeys = ["channel_id", "source_id"],
     foreignKeys = [ForeignKey(
-        entity = Source::class,
-        parentColumns = arrayOf("source_id"),
-        childColumns = arrayOf("source_id"),
-        onDelete = ForeignKey.CASCADE
-    ), ForeignKey(
         entity = Channel::class,
         parentColumns = arrayOf("channel_id"),
         childColumns = arrayOf("channel_id"),
@@ -22,11 +17,9 @@ import androidx.room.ForeignKey
 class ChannelUrl(
 
     @ColumnInfo(name = "channel_id", index = true)
-    val channelId: Long,
+    var channelId: Long,
 
-    @ColumnInfo(name = "source_id", index = true)
-    val sourceId: Long,
-
+    @PrimaryKey
     @ColumnInfo(name = "channel_url")
     val url: String
 

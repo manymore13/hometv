@@ -1,12 +1,17 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <ListPreference
-        app:entries="@array/entries_array"
-        app:entryValues="@array/entry_values_array"
         app:allowDividerAbove="true"
-        app:summary="@string/media_source_summary"
-        app:key="@string/media_source_key"
-        app:title="@string/media_source_title" />
+        app:entries="@array/entries_source_update_time_array"
+        app:entryValues="@array/entry_source_update_time_values_array"
+        app:key="@string/source_update_time_key"
+        app:summary="@string/media_source_title"
+        app:title="@string/media_source_summary" />
+
+    <Preference
+        app:key="@string/source_edit_key"
+        app:summary="@string/source_edit_summary"
+        app:title="@string/source_edit_title" />
 
     <Preference
         app:key="feedback"

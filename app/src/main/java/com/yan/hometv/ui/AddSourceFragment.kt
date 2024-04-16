@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.yan.hometv.MediaViewModel
 import com.yan.hometv.R
 import com.yan.hometv.wifi.SimpleWebServer
-import com.yan.source.MediaSource
+import com.yan.source.db.Source
 
 class AddSourceFragment : DialogFragment() {
 
@@ -59,7 +59,7 @@ class AddSourceFragment : DialogFragment() {
                     // Sign in the user.
                     val sourceName = sourceNameEt.text.toString()
                     val sourceUrl = sourceUrlEt.text.toString()
-//                    mediaModel.addNewSource(MediaSource(sourceName, sourceUrl))
+                    mediaModel.addNewSource(Source(sourceName, sourceUrl))
                 }
                 .setNegativeButton(
                     R.string.cancel

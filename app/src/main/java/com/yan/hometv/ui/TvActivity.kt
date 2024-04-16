@@ -67,7 +67,7 @@ class TvActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(R.id.media_play, mediaPlayerFragment, mediaPlayerFragment::class.simpleName)
             .commit()
-        mediaModel.init()
+        mediaModel.initSource()
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         mediaModel.showLoading.observe(this) { show ->

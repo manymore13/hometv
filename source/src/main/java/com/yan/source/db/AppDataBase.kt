@@ -1,4 +1,4 @@
-package com.yan.db
+package com.yan.source.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

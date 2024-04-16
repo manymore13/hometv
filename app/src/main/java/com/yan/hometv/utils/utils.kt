@@ -29,3 +29,7 @@ fun getCurrentIPAddress(context: Context): String? {
     }
     return "Unavailable"
 }
+
+fun isNeedRefreshData(lastTime: Long, refreshTime: Long): Boolean {
+    return System.currentTimeMillis() - lastTime > refreshTime
+}

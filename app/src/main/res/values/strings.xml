@@ -17,17 +17,26 @@
     <string name="error_code_io_network_connection_failed">网络连接错误,请检查设备网络</string>
     <string name="error_code_io_network_connection_timeout">网络连接超时，请稍后重试</string>
 
-    <string name="media_source_title">当前媒体源</string>
-    <string name="media_source_summary">请选择媒体源</string>
-    <string name="media_source_key">media_source_key_123</string>
-    <string-array name="entries_array">
-        <item>Option 1</item>
-        <item>Option 2</item>
-        <item>Option 3</item>
+    <string name="media_source_title">一天</string>
+    <string name="media_source_summary">多久更新一次源</string>
+    <string name="source_edit_key">source_edit_key</string>
+    <string name="source_edit_title">编辑源</string>
+    <string name="source_edit_summary">可以对源进行删除操作</string>
+    <string name="source_update_time_key">source_update_time</string>
+    <string-array name="entries_source_update_time_array">
+        <item>一天</item>
+        <item>两天</item>
+        <item>三天</item>
+        <item>七天</item>
+        <item>一个月</item>
     </string-array>
-    <string-array name="entry_values_array">
-        <item>value1</item>
-        <item>value2</item>
-        <item>value3</item>
+    <string-array  name="entry_source_update_time_values_array">
+        <item>86400000</item>
+        <item>172800000</item>
+        <item>259200000</item>
+        <item>604800000</item>
+        <item>2592000000</item>
     </string-array>
+
+    <string name="del_success">删除成功</string>
 </resources>
