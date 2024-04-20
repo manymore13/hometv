@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.yan.hometv'
+    namespace 'com.wei.liuying'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.yan.hometv"
+        applicationId "com.wei.liuying"
         minSdk 24
         targetSdk 33
         versionCode 1
