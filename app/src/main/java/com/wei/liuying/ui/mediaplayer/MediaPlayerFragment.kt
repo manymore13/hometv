@@ -37,7 +37,9 @@ class MediaPlayerFragment : Fragment() {
             asyncGetPlayer = { player ->
                 binding.playerView.player = player
                 initListener()
-                initArguments()
+                if (!player.isPlaying) {
+                    initArguments()
+                }
             }
         }
         this.mediaPlayHelper = mediaPlayHelper
@@ -95,12 +97,6 @@ class MediaPlayerFragment : Fragment() {
 //                binding.ivPlayState.isVisible = !isPlaying
             }
         })
-    }
-
-    override fun onResume() {
-        super.onResume()
-        mediaPlayHelper.prepare()
-        mediaPlayHelper.play()
     }
 
     fun setMediaItem(mediaItem: MediaItem) {

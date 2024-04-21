@@ -206,11 +206,11 @@ class TvActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         mediaPlayerFragment.pause()
-        mediaPlayerFragment.stop()
     }
 
     override fun onStop() {
         super.onStop()
+        mediaPlayerFragment.stop()
     }
 
     override fun onResume() {
