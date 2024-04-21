@@ -20,6 +20,14 @@
     <string name="media_source_title">一天</string>
     <string name="media_source_summary">多久更新一次源</string>
 
+    <string name="source_select_key">source_select_key</string>
+    <string name="source_select_title">当前选中的源</string>
+    <string name="source_select_summary"> ，app进入时，默认加载的此源</string>
+
+    <string name="source_refresh_key">source_refresh_key</string>
+    <string name="source_refresh_title">更新选中的源</string>
+    <string name="source_refresh_summary">如果选中的源有频道无法播放，可以点击我，立即更新选中的源数据</string>
+
     <string name="source_add_key">source_add_key</string>
     <string name="source_add_title">添加源</string>
     <string name="source_add_summary">可以添加新的源</string>
@@ -37,7 +45,7 @@
         <item>七天</item>
         <item>一个月</item>
     </string-array>
-    <string-array  name="entry_source_update_time_values_array">
+    <string-array name="entry_source_update_time_values_array">
         <item>86400000</item>
         <item>172800000</item>
         <item>259200000</item>
@@ -46,4 +54,10 @@
     </string-array>
 
     <string name="del_success">删除成功</string>
+
+    <string name="refresh_no_select_source_tip">当前没有可用的源</string>
+    <string name="update_success">更新成功</string>
+
+    <string name="loading">加载中</string>
+    <string name="updating">加更新中</string>
 </resources>

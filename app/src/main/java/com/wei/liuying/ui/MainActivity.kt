@@ -79,9 +79,8 @@ open class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         val groupId = item.groupId
         if (groupId == GROUP_ADD_ID) {
-            val title = item.title
             val id = item.itemId
-            mediaModel.loadChannels(id.toLong())
+            mediaModel.selectSource(id.toLong())
             return true
         } else {
             return when (item.itemId) {

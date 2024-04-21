@@ -6,6 +6,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
 import com.wei.liuying.MediaViewModel
+import com.wei.liuying.R
 import com.wei.source.db.Source
 
 /**
@@ -36,7 +37,7 @@ class SourceEditFragment : DialogFragment() {
         }
 
         val checkedItems = BooleanArray(sourceList.size)
-        return AlertDialog.Builder(requireActivity()).setTitle("Select items")
+        return AlertDialog.Builder(requireActivity()).setTitle(R.string.source_delete_title)
             .setMultiChoiceItems(nameList, checkedItems) { _, which, isChecked ->
                 checkedItems[which] = isChecked
             }.setPositiveButton("OK") { _, _ ->

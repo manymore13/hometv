@@ -26,6 +26,7 @@ import com.wei.liuying.ui.mediaplayer.MediaPlayReceiver
 import com.wei.liuying.ui.mediaplayer.MediaPlayerFragment
 import com.wei.liuying.ui.mediaplayer.PlayerActivity
 import com.wei.liuying.ui.setting.SettingActivity
+import com.wei.liuying.utils.toast
 import com.wei.source.utils.kv
 import kotlinx.coroutines.launch
 
@@ -61,16 +62,24 @@ class TvActivity : AppCompatActivity() {
         binding = ActivityTvMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val recentMediaItem = mediaModel.getRecentMediaItem()
-        if (recentMediaItem != null) {
-            mediaPlayerFragment.arguments = Bundle().apply {
-                putParcelable(PlayerActivity.RECENT_MEDIA, recentMediaItem)
+        lifecycleScope.launch {
+            val recentMediaItem = mediaModel.getRecentChannel()
+            if (recentMediaItem != null) {
+                mediaPlayerFragment.arguments = Bundle().apply {
+                    putParcelable(PlayerActivity.RECENT_MEDIA, recentMediaItem)
+                }
             }
+            supportFragmentManager.beginTransaction()
+                .replace(
+                    R.id.media_play,
+                    mediaPlayerFragment,
+                    mediaPlayerFragment::class.simpleName
+                )
+                .commit()
         }
 
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.media_play, mediaPlayerFragment, mediaPlayerFragment::class.simpleName)
-            .commit()
+
+
         mediaModel.initSource()
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
@@ -84,7 +93,7 @@ class TvActivity : AppCompatActivity() {
                 if (mediaItem != null) {
                     playMediaItem(mediaItem)
                 } else {
-                    mediaModel.selectMediaItem(0)
+                    mediaModel.selectChannel(0)
                 }
             }
 
@@ -129,6 +138,7 @@ class TvActivity : AppCompatActivity() {
     }
 
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
+        toast("keyCode = $keyCode")
         when (keyCode) {
             KeyEvent.KEYCODE_MENU -> {
                 SettingActivity.start(this)
@@ -161,14 +171,14 @@ class TvActivity : AppCompatActivity() {
 
             KeyEvent.KEYCODE_CHANNEL_UP, KeyEvent.KEYCODE_DPAD_UP -> {
                 if (!mediaListFragment.isAdded) {
-                    mediaModel.prev()
+                    mediaModel.prevMediaItem()
                     return true
                 }
             }
 
             KeyEvent.KEYCODE_CHANNEL_DOWN, KeyEvent.KEYCODE_DPAD_DOWN -> {
                 if (!mediaListFragment.isAdded) {
-                    mediaModel.next()
+                    mediaModel.nextMediaItem()
                     return true
                 }
             }
@@ -179,7 +189,7 @@ class TvActivity : AppCompatActivity() {
 
     override fun onPause() {
         super.onPause()
-        mediaPlayerFragment.pause()
+        mediaPlayerFragment.stop()
     }
 
     override fun onResume() {

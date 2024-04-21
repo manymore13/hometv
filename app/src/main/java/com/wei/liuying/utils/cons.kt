@@ -12,4 +12,4 @@ import com.wei.liuying.R
 val SOURCE_UPDATE_TIME_KEY: String by lazy {
     App.getContext().getString(R.string.source_update_time_key)
 }
-const val SELECTED_SOURCE_NAME = "selected_source_name"
+const val SELECTED_SOURCE_ID = "selected_source_id"

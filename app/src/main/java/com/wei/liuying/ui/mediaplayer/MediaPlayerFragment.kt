@@ -129,4 +129,10 @@ class MediaPlayerFragment : Fragment() {
         }
     }
 
+    fun stop() {
+        if (::mediaPlayHelper.isInitialized) {
+            mediaPlayHelper.stop()
+        }
+    }
+
 }

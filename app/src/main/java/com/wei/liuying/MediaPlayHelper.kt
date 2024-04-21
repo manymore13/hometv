@@ -204,6 +204,12 @@ class MediaPlayHelper(private val context: Context) :
 
     fun pause() {
         if (player?.isCommandAvailable(Player.COMMAND_PLAY_PAUSE) == true) {
+            player?.pause()
+        }
+    }
+
+    fun stop() {
+        if (player?.isCommandAvailable(Player.COMMAND_STOP) == true) {
             player?.stop()
         }
     }

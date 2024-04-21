@@ -15,11 +15,15 @@ data class MediaItem(
     val id: Long,
     val mediaName: String,
     var mediaUrl: String,
-    val iconUrl: String
+    val iconUrl: String,
+    val sourceId: Long
 ) : Parcelable
 
 fun Channel.toMediaItem(): MediaItem {
-    return MediaItem(this.id, this.name, "", this.icon ?: "")
+    return MediaItem(
+        id = id, mediaName = name,
+        mediaUrl = "", iconUrl = icon ?: "", sourceId = sourceId
+    )
 }
 
 fun MediaItem.toSysMediaItem(): androidx.media3.common.MediaItem {
@@ -40,10 +44,17 @@ fun androidx.media3.common.MediaItem.toMediaItem(): MediaItem {
     val metadata = this.mediaMetadata
     val tag = this.localConfiguration?.tag
     var id: Long = 0L
+    var sourceId: Long = 0L
     if (tag != null) {
         val mediaItem: MediaItem = this.localConfiguration?.tag as MediaItem
         id = mediaItem.id
+        sourceId = mediaItem.sourceId
     }
 
-    return MediaItem(id, metadata.title.toString(), "", metadata.artworkUri.toString())
+    return MediaItem(
+        id = id,
+        mediaName = metadata.title.toString(),
+        mediaUrl = "",
+        iconUrl = metadata.artworkUri.toString(), sourceId = sourceId
+    )
 }

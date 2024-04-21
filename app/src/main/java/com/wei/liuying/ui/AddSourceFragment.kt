@@ -28,8 +28,13 @@ class AddSourceFragment : DialogFragment() {
         set(value) {
             field = value
             lifecycleScope.launch {
-                val ipAddress = getIpAddress(requireContext())
-                serviceTv?.text = "当前地址：$ipAddress:8888"
+                try {
+                    val ipAddress = getIpAddress(requireContext())
+                    serviceTv?.text = "当前地址：$ipAddress:8888"
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
             }
         }
 
@@ -72,7 +77,7 @@ class AddSourceFragment : DialogFragment() {
                     // Sign in the user.
                     val sourceName = sourceNameEt.text.toString()
                     val sourceUrl = sourceUrlEt.text.toString()
-                    mediaModel.addNewSource(Source(sourceName, sourceUrl))
+                    mediaModel.addNewSource(Source(name = sourceName, url = sourceUrl))
                 }
                 .setNegativeButton(
                     R.string.cancel

@@ -25,15 +25,14 @@ import com.wei.liuying.ui.mediaplayer.MediaPlayReceiver
  */
 class MediaPlayService : MediaSessionService() {
 
-    private var mediaSession: MediaSession? = null
-    private var player: Player? = null
+    private lateinit var mediaSession: MediaSession
     private val mediaPlayReceiver = object : MediaPlayReceiver() {
         override fun onPause() {
-            player?.pause()
+            mediaSession.player.pause()
         }
 
         override fun onDestroy() {
-            needRelease()
+            stopSelf()
         }
     }
 
@@ -41,10 +40,22 @@ class MediaPlayService : MediaSessionService() {
         const val TAG = "MediaPlayService"
     }
 
-    @OptIn(UnstableApi::class)
+
     override fun onCreate() {
         super.onCreate()
         Log.d(TAG, "onCreate: ")
+        initializeSessionAndPlayer()
+        ContextCompat.registerReceiver(
+            this,
+            mediaPlayReceiver,
+            IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY).apply {
+                addAction(MediaPlayReceiver.ACTION_DESTROY_EVENT)
+            }, ContextCompat.RECEIVER_NOT_EXPORTED
+        )
+    }
+
+    @OptIn(UnstableApi::class)
+    private fun initializeSessionAndPlayer() {
         val dataSourceFactory =
             DefaultHttpDataSource.Factory().apply {
                 setAllowCrossProtocolRedirects(true)
@@ -65,15 +76,7 @@ class MediaPlayService : MediaSessionService() {
         player.run {
             playWhenReady = false
         }
-        this.player = player
         mediaSession = MediaSession.Builder(this, player).build()
-        ContextCompat.registerReceiver(
-            this,
-            mediaPlayReceiver,
-            IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY).apply {
-                addAction(MediaPlayReceiver.ACTION_DESTROY_EVENT)
-            }, ContextCompat.RECEIVER_NOT_EXPORTED
-        )
     }
 
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession? {
@@ -82,7 +85,7 @@ class MediaPlayService : MediaSessionService() {
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-        val player = this.player ?: return
+        val player = mediaSession.player
         if (!player.playWhenReady
             || player.mediaItemCount == 0
             || player.playbackState == Player.STATE_ENDED
@@ -94,16 +97,11 @@ class MediaPlayService : MediaSessionService() {
     }
 
     override fun onDestroy() {
-        mediaSession?.run {
+        mediaSession.run {
             player.release()
             release()
-            mediaSession = null
         }
         unregisterReceiver(mediaPlayReceiver)
         super.onDestroy()
-    }
-
-    private fun needRelease() {
-        stopSelf()
     }
 }

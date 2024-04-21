@@ -10,15 +10,50 @@ import com.wei.source.db.Source
 import com.wei.source.utils.request
 import kotlinx.coroutines.flow.Flow
 import net.bjoernpetersen.m3u.M3uParser
+import java.io.IOException
 
-class SourceHelper(val context: Context) {
+class SourceRepository(val context: Context) {
+
+    companion object {
+        const val TAG = "SourceRepository"
+    }
 
     private val channelDao: ChannelDao by lazy {
         DatabaseManager.getInstance(context).getChannelDao()
     }
 
+    suspend fun updateSelectChannelFromSource(sourceId: Long, selectChannelId: Long): Int {
+        return channelDao.updateSelectChannelFromSource(sourceId, selectChannelId)
+    }
+
+    /**
+     * 处理源和频道的更新
+     */
+    @Throws(IOException::class)
+    suspend fun manageSourceRefresh(source: Source, refresh: Boolean = true): Long {
+        val sourceId: Long = if (source.refreshTime == 0L) {
+            // 插入源
+            channelDao.insertSource(source.apply {
+                refreshTime = System.currentTimeMillis()
+            })
+        } else {
+            source.id
+        }
+        val countChannel = channelDao.countChannel(sourceId)
+        Log.d(TAG, "manageSourceRefresh refresh countChannel = $countChannel $refresh")
+        if (refresh || (countChannel == 0L)) {
+            refreshSource(source.apply {
+                id = sourceId
+            })
+        }
+        return sourceId
+    }
+
+    /**
+     * 从网上获取数据，刷新源数据
+     */
     private suspend fun refreshSource(source: Source) {
-        Log.d("SourceHelper", "refresh source: $source")
+        Log.d(TAG, "refresh source: $source")
         val sourceId: Long = source.id
         val m3uStr = request(source.url)
         val m3uEntryList = M3uParser.parse(m3uStr)
@@ -66,6 +101,10 @@ class SourceHelper(val context: Context) {
         return channelDao.deleteSources(sourceList)
     }
 
+    suspend fun deleteChannelBySourceId(sourceId: Long): Int {
+        return channelDao.deleteChannelBySourceId(sourceId)
+    }
+
     suspend fun getChannelUrlByChannelId(channelId: Long): MutableList<ChannelUrl> {
         return channelDao.getChannelUrls(channelId)
     }
@@ -74,28 +113,12 @@ class SourceHelper(val context: Context) {
         return channelDao.getChannelById(channelId)
     }
 
-
-    /**
-     * 处理源和频道的更新
-     */
-    suspend fun manageSourceRefresh(source: Source, refresh: Boolean = true) {
-        val sourceId: Long = if (source.refreshTime == 0L) {
-            channelDao.insertSource(source.apply {
-                refreshTime = System.currentTimeMillis()
-            })
-        } else {
-            source.id
-        }
-        val countChannel = channelDao.countChannel(sourceId)
-        if (countChannel == 0L || refresh) {
-            refreshSource(source.apply {
-                id = sourceId
-            })
-        }
-    }
-
     suspend fun getAllChannels(sourId: Long): MutableList<Channel> {
         return channelDao.getChannelBySourceId(sourId)
+    }
+
+    suspend fun getAllChannelsFlow(sourId: Long): Flow<MutableList<Channel>> {
+        return channelDao.getChannelFlowBySourceId(sourId)
     }
 
 }

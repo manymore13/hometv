@@ -16,6 +16,9 @@ abstract class ChannelDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract suspend fun insertSource(source: Source): Long
 
+    @Query("UPDATE source SET select_channel_id = :selectChannelId WHERE source_id = :sourceId")
+    abstract suspend fun updateSelectChannelFromSource(sourceId: Long, selectChannelId: Long): Int
+
     @Query("Select * from source where source_name = :sourceName limit 1")
     abstract suspend fun getSourceByName(sourceName: String): Source?
 
@@ -30,6 +33,9 @@ abstract class ChannelDao {
 
     @Delete
     abstract suspend fun deleteSources(sourceList: MutableList<Source>): Int
+
+    @Query("delete from channel where source_id = :sourceId")
+    abstract suspend fun deleteChannelBySourceId(sourceId: Long):Int
 
     suspend fun hasSource(sourceName: String): Boolean {
         return getSourceByName(sourceName) != null
@@ -49,6 +55,9 @@ abstract class ChannelDao {
 
     @Query("SELECT * FROM channel WHERE source_id = :sourceId")
     abstract suspend fun getChannelBySourceId(sourceId: Long): MutableList<Channel>
+
+    @Query("SELECT * FROM channel WHERE source_id = :sourceId")
+    abstract fun getChannelFlowBySourceId(sourceId: Long): Flow<MutableList<Channel>>
 
     @Query("SELECT * FROM channel WHERE channel_id = :channelId")
     abstract suspend fun getChannelById(channelId: Long): Channel?

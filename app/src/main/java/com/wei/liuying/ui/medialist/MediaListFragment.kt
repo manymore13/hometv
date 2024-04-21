@@ -2,6 +2,7 @@ package com.wei.liuying.ui.medialist
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -53,6 +54,7 @@ open class MediaListFragment : Fragment() {
     private fun onGetPlayer(player: Player) {
         player.addListener(mediaListener)
         player.currentMediaItem?.toMediaItem()?.run {
+            Log.d(TAG, this.toString())
             showMediaInfo(this, player.isPlaying)
         }
     }
@@ -78,10 +80,10 @@ open class MediaListFragment : Fragment() {
         }
         val mediaModel = ViewModelProvider(requireActivity())[MediaViewModel::class.java]
         mediaModel.complete.observe(viewLifecycleOwner) {
-            val mediaAdapter = MediaAdapter(mediaModel.mediaList)
+            val mediaAdapter = MediaAdapter(mediaModel.mediaItemList)
             mediaAdapter.itemClick = object : MediaAdapter.ItemClick {
                 override fun onClick(position: Int) {
-                    mediaModel.selectMediaItem(position)
+                    mediaModel.selectChannel(position)
                 }
             }
             binding.mediaRecyclerView.layoutManager = getLayoutManager(requireContext())
