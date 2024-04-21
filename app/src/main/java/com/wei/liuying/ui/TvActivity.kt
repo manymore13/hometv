@@ -62,6 +62,28 @@ class TvActivity : AppCompatActivity() {
         binding = ActivityTvMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        mediaModel.initSource()
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        mediaModel.showLoading.observe(this) { show ->
+            showLoading(show)
+        }
+        mediaModel.complete.observe(this) {
+//            lifecycleScope.launch {
+//                val mediaItem = mediaModel.getRecentChannel()
+//                if (mediaItem != null) {
+//                    playMediaItem(mediaItem)
+//                } else {
+//                    mediaModel.selectChannel(0)
+//                }
+//            }
+
+        }
+
+        mediaModel.selectMediaLiveData.observe(this) {
+            playMediaItem(it)
+        }
+
         lifecycleScope.launch {
             val recentMediaItem = mediaModel.getRecentChannel()
             if (recentMediaItem != null) {
@@ -79,29 +101,6 @@ class TvActivity : AppCompatActivity() {
         }
 
 
-
-        mediaModel.initSource()
-        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
-        mediaModel.showLoading.observe(this) { show ->
-            showLoading(show)
-        }
-        mediaModel.complete.observe(this) {
-            lifecycleScope.launch {
-                val channelId = kv.decodeLong(MediaViewModel.RECENT_MEDIA, 0)
-                val mediaItem = mediaModel.getMediaItemByChannelId(channelId)
-                if (mediaItem != null) {
-                    playMediaItem(mediaItem)
-                } else {
-                    mediaModel.selectChannel(0)
-                }
-            }
-
-        }
-
-        mediaModel.selectMediaLiveData.observe(this) {
-            playMediaItem(it)
-        }
     }
 
     private fun playMediaItem(mediaItem: MediaItem) {
@@ -137,9 +136,28 @@ class TvActivity : AppCompatActivity() {
 
     }
 
+    private fun showMenu(): Boolean {
+        if (mediaPlayerFragment.isAdded && !mediaListFragment.isAdded) {
+            showHideMediaListFragment(true)
+            return true
+        }
+        return false
+    }
+
     override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
-        toast("keyCode = $keyCode")
+
         when (keyCode) {
+
+            KeyEvent.KEYCODE_MEDIA_PLAY -> {
+                mediaPlayerFragment.play()
+                return true
+            }
+
+            KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE -> {
+                mediaPlayerFragment.pause()
+                return true
+            }
+
             KeyEvent.KEYCODE_MENU -> {
                 SettingActivity.start(this)
                 return true
@@ -156,8 +174,7 @@ class TvActivity : AppCompatActivity() {
 
             KeyEvent.KEYCODE_DPAD_RIGHT -> {
                 // 菜单
-                if (mediaPlayerFragment.isAdded && !mediaListFragment.isAdded) {
-                    showHideMediaListFragment(true)
+                if (showMenu()) {
                     return true
                 }
             }
@@ -186,20 +203,28 @@ class TvActivity : AppCompatActivity() {
         return super.onKeyUp(keyCode, event)
     }
 
-
     override fun onPause() {
         super.onPause()
+        mediaPlayerFragment.pause()
         mediaPlayerFragment.stop()
+    }
+
+    override fun onStop() {
+        super.onStop()
     }
 
     override fun onResume() {
         super.onResume()
-        mediaPlayerFragment.play()
+        mediaPlayerFragment.run {
+            prepare()
+            play()
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         sendBroadcast(Intent(MediaPlayReceiver.ACTION_DESTROY_EVENT))
+        mediaPlayerFragment.stop()
     }
 
     private fun showLoading(showLoading: Boolean) {

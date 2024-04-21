@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    android:background="@drawable/shape_media_info"
     android:padding="10dp"
-    android:background="@drawable/shape_media_info">
+    android:visibility="invisible">
 
     <ImageView
         android:id="@+id/media_icon"

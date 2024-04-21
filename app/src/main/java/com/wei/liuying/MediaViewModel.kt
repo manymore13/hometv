@@ -47,8 +47,8 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
     private val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             // 处理广播
-            when(intent.action){
-                ACTION_CHANGE_SOURCE->{
+            when (intent.action) {
+                ACTION_CHANGE_SOURCE -> {
                     val sourceId = AppConfig.getSelectedSourceId()
                     selectSource(sourceId)
                 }
@@ -126,8 +126,19 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
 
                 mediaItemList.clear()
                 mediaItemList.addAll(mediaItems)
+                updateCurrentItemIndex()
                 complete.postValue("complete")
                 showLoading.postValue(false)
+            }
+        }
+    }
+
+    private fun updateCurrentItemIndex() {
+        val channelId = AppConfig.getRecentChannel()
+        mediaItemList.forEachIndexed { index, mediaItem ->
+            if (mediaItem.id == channelId) {
+                currentItem = index
+                return@forEachIndexed
             }
         }
     }
@@ -164,9 +175,14 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     suspend fun getRecentChannel(): MediaItem? {
-        val sourceId = AppConfig.getSelectedSourceId()
-        val source = sourceRepository.getSourceById(sourceId)
-        return source?.selectChannelId?.let { sourceRepository.getChannelById(it)?.toMediaItem() }
+        val channelId = AppConfig.getRecentChannel()
+        val channel = sourceRepository.getChannelById(channelId)
+        return channel?.toMediaItem()?.apply {
+            val url = getUrl(channelId)
+            if(url?.isNotEmpty() == true){
+                mediaUrl = url
+            }
+        }
     }
 
     fun selectChannel(position: Int) {
@@ -174,6 +190,7 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
         selectChannelJob = viewModelScope.launch {
             if (checkPosition(position)) {
                 val curMedia = mediaItemList[position]
+                currentItem = position
                 val channelUrls = sourceRepository.getChannelUrlByChannelId(curMedia.id)
                 if (channelUrls.isNotEmpty()) {
                     curMedia.mediaUrl = channelUrls[0].url
@@ -182,7 +199,15 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }
         }
+    }
 
+    suspend fun getUrl(channelId: Long): String? {
+        val channelUrls = sourceRepository.getChannelUrlByChannelId(channelId)
+        return if (channelUrls.isNotEmpty()) {
+            channelUrls[0].url
+        } else {
+            null
+        }
     }
 
     /**

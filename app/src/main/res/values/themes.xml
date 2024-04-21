@@ -20,6 +20,7 @@
         <item name="android:textDirection">locale</item>
         <item name="android:textAlignment">gravity</item>
         <item name="actionBarTheme">@style/MyActionBarTheme</item>
+        <item name="actionOverflowButtonStyle"></item>
 
 
         <!--        <item name="detailItemViewStyle">@style/ItemDetail</item>-->

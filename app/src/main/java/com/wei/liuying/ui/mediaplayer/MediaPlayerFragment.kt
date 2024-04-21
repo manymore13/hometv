@@ -7,15 +7,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
+import androidx.media3.common.Player.Listener
 import androidx.media3.common.util.UnstableApi
 import com.bumptech.glide.Glide
 import com.wei.liuying.MediaPlayHelper
 import com.wei.liuying.bean.MediaItem
 import com.wei.liuying.databinding.MediaPlayerBinding
 import com.wei.liuying.receiver.NetWorkStatusReceiver
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.wei.liuying.utils.delayHideAnim
+import com.wei.liuying.utils.playAnim
 
 class MediaPlayerFragment : Fragment() {
 
@@ -23,6 +23,7 @@ class MediaPlayerFragment : Fragment() {
     private lateinit var mediaPlayHelper: MediaPlayHelper
     private var mediaItem: MediaItem? = null
     private var rootClick: View.OnClickListener? = null
+
 
     companion object {
         const val DELAY = 2000L
@@ -35,6 +36,8 @@ class MediaPlayerFragment : Fragment() {
         val mediaPlayHelper = MediaPlayHelper(requireContext()).apply {
             asyncGetPlayer = { player ->
                 binding.playerView.player = player
+                initListener()
+                initArguments()
             }
         }
         this.mediaPlayHelper = mediaPlayHelper
@@ -46,6 +49,7 @@ class MediaPlayerFragment : Fragment() {
                 }
             })
         }
+
     }
 
     @UnstableApi
@@ -65,14 +69,14 @@ class MediaPlayerFragment : Fragment() {
         binding.root.setOnClickListener {
             rootClick?.onClick(it)
         }
-        if (mediaItem != null) {
-            showMediaInfoToast(mediaItem!!)
+        binding.playerView.setOnClickListener {
+            playOrPause()
         }
 
         return binding.root
     }
 
-    private fun initArguments(){
+    private fun initArguments() {
         arguments?.run {
             val mediaItem = getParcelable<MediaItem>(RECENT_MEDIA)
             if (mediaItem != null) {
@@ -81,15 +85,22 @@ class MediaPlayerFragment : Fragment() {
         }
     }
 
+    private fun initListener() {
+        mediaPlayHelper.setPlayerListener(object : Listener {
+            override fun onIsPlayingChanged(isPlaying: Boolean) {
+                super.onIsPlayingChanged(isPlaying)
+//                val resId =
+//                    if (isPlaying) androidx.media3.ui.R.drawable.exo_icon_pause else androidx.media3.ui.R.drawable.exo_icon_play
+//                binding.ivPlayState.setImageResource(resId)
+//                binding.ivPlayState.isVisible = !isPlaying
+            }
+        })
+    }
+
     override fun onResume() {
         super.onResume()
         mediaPlayHelper.prepare()
         mediaPlayHelper.play()
-    }
-
-    override fun onStart() {
-        initArguments()
-        super.onStart()
     }
 
     fun setMediaItem(mediaItem: MediaItem) {
@@ -104,16 +115,26 @@ class MediaPlayerFragment : Fragment() {
         if (!::binding.isInitialized) {
             return
         }
-        TransitionManager.beginDelayedTransition(binding.includeMediaInfo.root)
-        binding.includeMediaInfo.run {
-            Glide.with(requireActivity()).load(mediaItem.iconUrl).into(mediaIcon)
-            mediaName.text = mediaItem.mediaName
-            root.isVisible = true
-            lifecycleScope.launch {
-                delay(DELAY)
-                TransitionManager.beginDelayedTransition(binding.includeMediaInfo.root)
-                root.isVisible = false
+        playAnim(binding.includeMediaInfo.root) {
+            binding.includeMediaInfo.run {
+                Glide.with(requireActivity()).load(mediaItem.iconUrl).into(mediaIcon)
+                mediaName.text = mediaItem.mediaName
+                root.isVisible = true
+                delayHideAnim(this@MediaPlayerFragment, binding.includeMediaInfo.root)
             }
+        }
+        TransitionManager.beginDelayedTransition(binding.includeMediaInfo.root)
+    }
+
+    fun playOrPause() {
+        if (::mediaPlayHelper.isInitialized) {
+            mediaPlayHelper.playOrPause()
+        }
+    }
+
+    fun prepare() {
+        if (::mediaPlayHelper.isInitialized) {
+            mediaPlayHelper.prepare()
         }
     }
 
