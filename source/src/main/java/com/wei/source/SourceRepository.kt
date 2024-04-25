@@ -41,7 +41,7 @@ class SourceRepository(val context: Context) {
         }
         val countChannel = channelDao.countChannel(sourceId)
         Log.d(TAG, "manageSourceRefresh refresh countChannel = $countChannel $refresh")
-        if (refresh || (countChannel == 0L)) {
+        if (countChannel == 0L) {
             refreshSource(source.apply {
                 id = sourceId
             })
@@ -59,6 +59,14 @@ class SourceRepository(val context: Context) {
         val m3uEntryList = M3uParser.parse(m3uStr)
         val channelList = mutableListOf<Channel>()
         val channelUrl = mutableListOf<ChannelUrl>()
+        val dbChannelCount = channelDao.countChannel(sourceId)
+        var oldChannel: Channel? = null
+        if (dbChannelCount > 0) {
+            val selectChannelId = source.selectChannelId
+            oldChannel = channelDao.getChannelById(selectChannelId)
+            // 换新数据，本地数据要清掉
+            channelDao.deleteChannelBySourceId(sourceId)
+        }
         m3uEntryList.forEach {
             val iconUrl = it.metadata["tvg-logo"]
             val groupTitle = it.metadata["group-title"] ?: ""
@@ -75,6 +83,16 @@ class SourceRepository(val context: Context) {
             )
         }
         val ids = channelDao.insertChannels(channelList)
+        if (oldChannel?.name?.isNotEmpty() == true) {
+            val newChannel =
+                channelDao.getChannelBySourceIdAndChannelName(sourceId, oldChannel.name)
+            newChannel?.run {
+                val count = channelDao.updateSource(source.apply {
+                    selectChannelId = newChannel.id
+                })
+                Log.d(TAG, "updateSource count = $count")
+            }
+        }
         ids.forEachIndexed { index, id ->
             channelUrl[index].channelId = id
         }
@@ -85,8 +103,15 @@ class SourceRepository(val context: Context) {
         return channelDao.getSourceByName(sourceName)
     }
 
-    suspend fun getSourceById(sourceId: Long): Source? {
-        return channelDao.getSourceById(sourceId)
+    suspend fun getSourceById(sourceId: Long, isLoadDefault: Boolean = false): Source? {
+        var source = channelDao.getSourceById(sourceId)
+        if (isLoadDefault && source == null) {
+            val sourceList = channelDao.getAllSource()
+            if (sourceList.isNotEmpty()) {
+                source = sourceList[0]
+            }
+        }
+        return source
     }
 
     fun getAllSourceFlow(): Flow<MutableList<Source>> {
@@ -111,6 +136,10 @@ class SourceRepository(val context: Context) {
 
     suspend fun getChannelById(channelId: Long): Channel? {
         return channelDao.getChannelById(channelId)
+    }
+
+    suspend fun getChannelByName(channelName: String): Channel? {
+        return channelDao.getChannelByName(channelName)
     }
 
     suspend fun getAllChannels(sourId: Long): MutableList<Channel> {

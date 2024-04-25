@@ -44,7 +44,7 @@ open class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         supportFragmentManager.beginTransaction().replace(R.id.media_list, MediaListFragment())
             .commit()
-        mediaModel.initSource()
+        mediaModel.initSourceData()
 
         mediaModel.showLoading.observe(this) { show ->
             showLoading(show)

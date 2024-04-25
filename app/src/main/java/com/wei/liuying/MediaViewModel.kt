@@ -34,7 +34,7 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
 
     companion object {
         const val TAG = "MediaViewModel"
-        const val RECENT_MEDIA = "RECENT_MEDIA"
+        const val RECENT_MEDIA_NAME = "RECENT_MEDIA"
         const val DEFAULT_SOURCE_NAME = "默认源"
 
         const val ACTION_CHANGE_SOURCE = "ACTION_CHANGE_SOURCE"
@@ -56,28 +56,24 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun initSource() = viewModelScope.launch {
+    fun initSourceData() = viewModelScope.launch {
+
         LocalBroadcastManager.getInstance(App.getContext()).registerReceiver(
             broadcastReceiver,
             IntentFilter(ACTION_CHANGE_SOURCE)
         )
+
         val selectedSourceId = AppConfig.getSelectedSourceId()
 
-        var selectedSource: Source? = sourceRepository.getSourceById(sourceId = selectedSourceId)
+        var selectedSource: Source? =
+            sourceRepository.getSourceById(sourceId = selectedSourceId, true)
 
         if (selectedSource == null) {
-            val sourceList = sourceRepository.getAllSource()
-            if (sourceList.isNotEmpty()) {
-                selectedSource = sourceList[0]
-            }
-        }
-
-        if (selectedSource == null) {
-            selectedSource = Source(0, DEFAULT_SOURCE_NAME, DEFAULT_SOURCE_URL)
+            selectedSource = Source(name = DEFAULT_SOURCE_NAME, url = DEFAULT_SOURCE_URL)
             Log.d(TAG, "加载默认source $DEFAULT_SOURCE_NAME")
         }
 
-        selectSource(selectedSource)
+        selectLoadSource(selectedSource)
     }
 
     fun getAllSourceFlow(): Flow<MutableList<Source>> {
@@ -105,7 +101,7 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
     }
 
 
-    private fun selectSource(source: Source) {
+    private fun selectLoadSource(source: Source) {
 
         selectSourceJob?.cancel()
         selectSourceJob = viewModelScope.launch {
@@ -134,9 +130,9 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun updateCurrentItemIndex() {
-        val channelId = AppConfig.getRecentChannel()
+        val channelName = AppConfig.getRecentChannelName()
         mediaItemList.forEachIndexed { index, mediaItem ->
-            if (mediaItem.id == channelId) {
+            if (mediaItem.mediaName == channelName) {
                 currentItem = index
                 return@forEachIndexed
             }
@@ -147,7 +143,7 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
         val source = sourceRepository.getSourceById(id)
         if (source != null) {
             try {
-                selectSource(source)
+                selectLoadSource(source)
             } catch (e: Exception) {
                 e.printStackTrace()
                 toast(e.message)
@@ -160,7 +156,7 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
      */
     fun addNewSource(source: Source) = viewModelScope.launch {
         try {
-            selectSource(source)
+            selectLoadSource(source)
         } catch (e: Exception) {
             e.printStackTrace()
             toast(e.message)
@@ -175,11 +171,11 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     suspend fun getRecentChannel(): MediaItem? {
-        val channelId = AppConfig.getRecentChannel()
-        val channel = sourceRepository.getChannelById(channelId)
+        val channelName = AppConfig.getRecentChannelName()
+        val channel = sourceRepository.getChannelByName(channelName)
         return channel?.toMediaItem()?.apply {
-            val url = getUrl(channelId)
-            if(url?.isNotEmpty() == true){
+            val url = getUrl(channel.id)
+            if (url?.isNotEmpty() == true) {
                 mediaUrl = url
             }
         }
@@ -195,7 +191,7 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
                 if (channelUrls.isNotEmpty()) {
                     curMedia.mediaUrl = channelUrls[0].url
                     selectMediaLiveData.value = curMedia
-                    AppConfig.setRecentChannel(curMedia.id)
+                    AppConfig.setRecentChannelName(curMedia.mediaName)
                 }
             }
         }

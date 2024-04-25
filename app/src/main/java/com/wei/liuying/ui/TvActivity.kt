@@ -27,7 +27,6 @@ import com.wei.liuying.ui.mediaplayer.MediaPlayerFragment
 import com.wei.liuying.ui.mediaplayer.PlayerActivity
 import com.wei.liuying.ui.setting.SettingActivity
 import com.wei.liuying.utils.toast
-import com.wei.source.utils.kv
 import kotlinx.coroutines.launch
 
 /**
@@ -62,22 +61,11 @@ class TvActivity : AppCompatActivity() {
         binding = ActivityTvMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        mediaModel.initSource()
+        mediaModel.initSourceData()
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         mediaModel.showLoading.observe(this) { show ->
             showLoading(show)
-        }
-        mediaModel.complete.observe(this) {
-//            lifecycleScope.launch {
-//                val mediaItem = mediaModel.getRecentChannel()
-//                if (mediaItem != null) {
-//                    playMediaItem(mediaItem)
-//                } else {
-//                    mediaModel.selectChannel(0)
-//                }
-//            }
-
         }
 
         mediaModel.selectMediaLiveData.observe(this) {
@@ -144,9 +132,9 @@ class TvActivity : AppCompatActivity() {
         return false
     }
 
-    override fun onKeyUp(keyCode: Int, event: KeyEvent?): Boolean {
-
-        when (keyCode) {
+    override fun dispatchKeyEvent(event: KeyEvent): Boolean {
+        toast("event.code = ${event.keyCode}")
+        when (event.keyCode) {
 
             KeyEvent.KEYCODE_MEDIA_PLAY -> {
                 mediaPlayerFragment.play()
@@ -200,8 +188,9 @@ class TvActivity : AppCompatActivity() {
                 }
             }
         }
-        return super.onKeyUp(keyCode, event)
+        return super.dispatchKeyEvent(event)
     }
+
 
     override fun onPause() {
         super.onPause()
