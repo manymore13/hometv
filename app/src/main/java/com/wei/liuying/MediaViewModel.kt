@@ -110,7 +110,7 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
 
             val updateTime = AppConfig.getSourceUpdateCycleTime()
             val isNeedRefresh = isNeedRefreshData(source.refreshTime, updateTime)
-            val sourceId = sourceRepository.manageSourceRefresh(source, isNeedRefresh)
+            val sourceId = sourceRepository.manageSourceRefresh(source, false)
 
             AppConfig.setSelectedSourceId(sourceId = sourceId)
             Log.d(TAG, "isNeedRefresh = $isNeedRefresh loadChannels: $source")

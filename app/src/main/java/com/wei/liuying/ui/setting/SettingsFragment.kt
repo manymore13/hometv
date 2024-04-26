@@ -56,11 +56,11 @@ class SettingsFragment : BasePreferenceFragment() {
 
     private fun initRefreshSelectSource() {
         val preference = findPreference<Preference>(R.string.source_refresh_key)
-        val sourceId = AppConfig.getSelectedSourceId()
-        Log.d(TAG, "sourceId = $sourceId")
         preference?.setOnPreferenceClickListener {
             loadingDialog.show()
             lifecycleScope.launch {
+                val sourceId = AppConfig.getSelectedSourceId()
+                Log.d(TAG, "sourceId = $sourceId")
                 val source = sourceRepository.getSourceById(sourceId)
                 if (source != null) {
                     try {

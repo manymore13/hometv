@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">HomeTV</string>
+    <string name="app_name">影流</string>
     <bool name="isW720">false</bool>
     <string name="insert_media_source">导入源</string>
     <string name="setting">设置</string>

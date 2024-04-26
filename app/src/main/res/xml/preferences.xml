@@ -1,12 +1,12 @@
 <PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ListPreference
-        app:entries="@array/entries_source_update_time_array"
-        app:entryValues="@array/entry_source_update_time_values_array"
-        app:iconSpaceReserved="false"
-        app:key="@string/source_update_time_key"
-        app:summary="@string/media_source_title"
-        app:title="@string/media_source_summary" />
+<!--    <ListPreference-->
+<!--        app:entries="@array/entries_source_update_time_array"-->
+<!--        app:entryValues="@array/entry_source_update_time_values_array"-->
+<!--        app:iconSpaceReserved="false"-->
+<!--        app:key="@string/source_update_time_key"-->
+<!--        app:summary="@string/media_source_title"-->
+<!--        app:title="@string/media_source_summary" />-->
 
     <ListPreference
         app:entries="@array/entries_source_update_time_array"

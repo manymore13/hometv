@@ -41,7 +41,7 @@ class SourceRepository(val context: Context) {
         }
         val countChannel = channelDao.countChannel(sourceId)
         Log.d(TAG, "manageSourceRefresh refresh countChannel = $countChannel $refresh")
-        if (countChannel == 0L) {
+        if (countChannel == 0L || refresh) {
             refreshSource(source.apply {
                 id = sourceId
             })
