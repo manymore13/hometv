@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import com.tencent.bugly.crashreport.CrashReport
 import com.wei.liuying.MediaViewModel
 import com.wei.liuying.R
 import com.wei.liuying.databinding.ActivityMainBinding
@@ -49,6 +50,8 @@ open class MainActivity : AppCompatActivity() {
         mediaModel.showLoading.observe(this) { show ->
             showLoading(show)
         }
+        setSupportActionBar(binding.actionBar)
+//        CrashReport.testJavaCrash()
     }
 
     private fun showLoading(showLoading: Boolean) {

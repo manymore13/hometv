@@ -72,8 +72,12 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
             selectedSource = Source(name = DEFAULT_SOURCE_NAME, url = DEFAULT_SOURCE_URL)
             Log.d(TAG, "加载默认source $DEFAULT_SOURCE_NAME")
         }
-
-        selectLoadSource(selectedSource)
+        try {
+            selectLoadSource(selectedSource)
+        } catch (e: Exception) {
+            toast(e.message)
+            e.printStackTrace()
+        }
     }
 
     fun getAllSourceFlow(): Flow<MutableList<Source>> {

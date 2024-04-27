@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="?attr/listPreferredItemHeight"
     android:layout_gravity="bottom"
-    android:background="@color/primary"
+    android:background="@color/md_theme_primary"
     android:orientation="horizontal"
     android:paddingTop="3dp">
 
@@ -30,7 +30,6 @@
         android:layout_gravity="center_vertical"
         android:layout_marginStart="10dp"
         android:textAppearance="?attr/textAppearanceHeadline5"
-        android:textColor="@color/colorWhite"
         app:layout_constraintBottom_toBottomOf="@+id/media_icon"
         app:layout_constraintStart_toEndOf="@+id/media_icon"
         app:layout_constraintTop_toTopOf="@+id/media_icon"
@@ -43,7 +42,6 @@
         android:layout_gravity="center_vertical"
         android:layout_marginStart="10dp"
         android:textAppearance="?attr/textAppearanceHeadline6"
-        android:textColor="@color/colorWhite"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="@+id/media_name"
         app:layout_constraintStart_toEndOf="@+id/media_name"
@@ -66,7 +64,6 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="1dp"
         android:textAppearance="?attr/textAppearanceHeadline6"
-        android:textColor="@color/grey_500"
         android:textSize="8sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/media_name"

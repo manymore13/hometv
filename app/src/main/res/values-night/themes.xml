@@ -1,7 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="AppTheme" parent="Theme.Material3.Light.NoActionBar">
+    <style name="AppTheme" parent="Theme.Material3.Dark.NoActionBar">
         <item name="colorPrimary">@color/md_theme_primary</item>
         <item name="colorOnPrimary">@color/md_theme_onPrimary</item>
         <item name="colorPrimaryContainer">@color/md_theme_primaryContainer</item>
@@ -49,20 +47,4 @@
         <item name="colorSurfaceContainerHigh">@color/md_theme_surfaceContainerHigh</item>
         <item name="colorSurfaceContainerHighest">@color/md_theme_surfaceContainerHighest</item>
     </style>
-
-    <!-- 自定义的 ActionBar 标题文本样式 -->
-<!--    <style name="MyActionBarTheme" parent="Theme.MaterialComponents.DayNight">-->
-<!--        <item name="android:textColorPrimary">@android:color/white</item>-->
-<!--        <item name="colorPrimary">@color/primary</item>-->
-<!--    </style>-->
-
-    <style name="Theme.HomeTV" parent="AppTheme"/>
-    <style name="Theme.Full" parent="AppTheme">
-        <item name="windowActionBar">true</item>-->
-        <item name="windowNoTitle">true</item>
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowActivityTransitions">true</item>
-    </style>
-
-    <!--    <style name="Theme.HomeTV" parent="android:Theme.Material.Light.NoActionBar" />-->
 </resources>

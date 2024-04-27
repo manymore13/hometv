@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -38,6 +39,7 @@ class TvActivity : AppCompatActivity() {
 
     companion object {
         const val GROUP_ADD_ID = 520
+        const val TAG = "TvActivity"
 
         @JvmStatic
         fun start(context: Context) {
@@ -63,6 +65,7 @@ class TvActivity : AppCompatActivity() {
 
         mediaModel.initSourceData()
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         mediaModel.showLoading.observe(this) { show ->
             showLoading(show)
@@ -133,7 +136,19 @@ class TvActivity : AppCompatActivity() {
     }
 
     override fun dispatchKeyEvent(event: KeyEvent): Boolean {
-        toast("event.code = ${event.keyCode}")
+
+        Log.d(TAG, "dispatchKeyEvent: " + event.keyCode)
+
+        return super.dispatchKeyEvent(event)
+    }
+
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        Log.d(TAG, "onKeyDown: " + event.keyCode)
+        return super.onKeyDown(keyCode, event)
+    }
+
+    override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
+        Log.d(TAG, "onKeyUp: " + event.keyCode)
         when (event.keyCode) {
 
             KeyEvent.KEYCODE_MEDIA_PLAY -> {
@@ -167,7 +182,7 @@ class TvActivity : AppCompatActivity() {
                 }
             }
 
-            KeyEvent.KEYCODE_BACK -> {
+            KeyEvent.KEYCODE_BACK, KeyEvent.KEYCODE_ESCAPE -> {
                 if (mediaListFragment.isAdded) {
                     showHideMediaListFragment(false)
                     return true
@@ -188,7 +203,7 @@ class TvActivity : AppCompatActivity() {
                 }
             }
         }
-        return super.dispatchKeyEvent(event)
+        return super.onKeyUp(keyCode, event)
     }
 
 
