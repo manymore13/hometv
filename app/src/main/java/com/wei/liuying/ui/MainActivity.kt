@@ -11,12 +11,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import com.tencent.bugly.crashreport.CrashReport
 import com.wei.liuying.MediaViewModel
 import com.wei.liuying.R
 import com.wei.liuying.databinding.ActivityMainBinding
 import com.wei.liuying.ui.medialist.MediaListFragment
 import com.wei.liuying.ui.setting.SettingActivity
+import com.wei.liuying.utils.EdgeToEdgeUtils
+import com.wei.liuying.utils.ThemeOverlayUtils
 import kotlinx.coroutines.launch
 
 open class MainActivity : AppCompatActivity() {
@@ -40,9 +41,13 @@ open class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        ThemeOverlayUtils.applyThemeOverlays(this)
         super.onCreate(savedInstanceState)
+        EdgeToEdgeUtils.applyEdgeToEdge(window, true)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         supportFragmentManager.beginTransaction().replace(R.id.media_list, MediaListFragment())
             .commit()
         mediaModel.initSourceData()
@@ -50,8 +55,10 @@ open class MainActivity : AppCompatActivity() {
         mediaModel.showLoading.observe(this) { show ->
             showLoading(show)
         }
-        setSupportActionBar(binding.actionBar)
-//        CrashReport.testJavaCrash()
+        binding.includeActionBar.run {
+            toolbar.setTitle(getString(R.string.app_name))
+            setSupportActionBar(toolbar)
+        }
     }
 
     private fun showLoading(showLoading: Boolean) {

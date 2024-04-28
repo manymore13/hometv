@@ -60,4 +60,7 @@
 
     <string name="loading">加载中</string>
     <string name="updating">加更新中</string>
+
+    <string name="appbar_scrolling_view_behavior" translatable="false">com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior</string>
+
 </resources>
