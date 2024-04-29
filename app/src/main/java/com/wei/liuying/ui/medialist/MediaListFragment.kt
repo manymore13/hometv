@@ -113,7 +113,7 @@ open class MediaListFragment : Fragment() {
     private fun showMediaInfo(mediaItem: MediaItem, isPlaying: Boolean = false) {
         binding.mediaPlayInfo?.run {
             mediaName.text = mediaItem.mediaName
-            Glide.with(requireContext()).load(mediaItem.iconUrl).into(mediaIcon.mediaIcon)
+            Glide.with(requireContext()).load(mediaItem.iconUrl).into(mediaIcon)
             updateStateUi(isPlaying)
         }
     }

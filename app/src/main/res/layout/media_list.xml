@@ -17,6 +17,9 @@
         tools:listitem="@layout/media_item" />
 
     <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/media_play_info"
+        android:layout_gravity="bottom"
         layout="@layout/media_play_info" />
 </FrameLayout>

@@ -43,7 +43,6 @@ open class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeOverlayUtils.applyThemeOverlays(this)
         super.onCreate(savedInstanceState)
-        EdgeToEdgeUtils.applyEdgeToEdge(window, true)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -57,7 +56,11 @@ open class MainActivity : AppCompatActivity() {
         }
         binding.includeActionBar.run {
             toolbar.setTitle(getString(R.string.app_name))
+            val actionBarColor = getColor(R.color.actionbar_Color)
+            toolbar.setBackgroundColor(actionBarColor)
+            window.statusBarColor = actionBarColor
             setSupportActionBar(toolbar)
+//            EdgeToEdgeUtils.applyEdgeToEdge(window, true)
         }
     }
 

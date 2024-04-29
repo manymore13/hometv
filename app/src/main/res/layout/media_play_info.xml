@@ -5,9 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="?attr/listPreferredItemHeight"
     android:layout_gravity="bottom"
-    style="?attr/colorSurfaceContainer"
-    android:orientation="horizontal"
-    android:paddingTop="3dp">
+    android:background="@color/actionbar_Color"
+    android:orientation="horizontal">
 
     <com.google.android.material.divider.MaterialDivider
         android:layout_width="0dp"
@@ -17,11 +16,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <include
+    <androidx.constraintlayout.utils.widget.ImageFilterView
         android:id="@+id/media_icon"
-        layout="@layout/media_icon"
-        tools:layout_editor_absoluteX="10dp"
-        tools:layout_editor_absoluteY="8dp" />
+        android:layout_width="@dimen/list_item_icon_size"
+        android:layout_height="@dimen/list_item_icon_size"
+        android:layout_marginVertical="@dimen/list_item_vertical_padding"
+        android:layout_marginLeft="@dimen/list_item_horizontal_padding"
+        android:background="@drawable/shape_media_icon_bg"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:round="3dp" />
 
     <TextView
         android:id="@+id/media_name"

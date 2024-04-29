@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="statusBarColor">#111111</color>
+    <color name="actionbar_Color">#111111</color>
     <color name="md_theme_primary">#C0C1FF</color>
     <color name="md_theme_onPrimary">#282A60</color>
     <color name="md_theme_primaryContainer">#3F4178</color>
