@@ -2,6 +2,8 @@ package com.wei.liuying.ui
 
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.Network
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -22,12 +24,12 @@ import com.wei.liuying.MediaViewModel
 import com.wei.liuying.R
 import com.wei.liuying.bean.MediaItem
 import com.wei.liuying.databinding.ActivityTvMainBinding
+import com.wei.liuying.receiver.NetworkChangeReceiver
 import com.wei.liuying.ui.medialist.MediaListFragment
 import com.wei.liuying.ui.mediaplayer.MediaPlayReceiver
 import com.wei.liuying.ui.mediaplayer.MediaPlayerFragment
 import com.wei.liuying.ui.mediaplayer.PlayerActivity
 import com.wei.liuying.ui.setting.SettingActivity
-import com.wei.liuying.utils.toast
 import kotlinx.coroutines.launch
 
 /**
@@ -75,23 +77,47 @@ class TvActivity : AppCompatActivity() {
             playMediaItem(it)
         }
 
-        lifecycleScope.launch {
-            val recentMediaItem = mediaModel.getRecentChannel()
-            if (recentMediaItem != null) {
-                mediaPlayerFragment.arguments = Bundle().apply {
-                    putParcelable(PlayerActivity.RECENT_MEDIA, recentMediaItem)
-                }
-            }
-            supportFragmentManager.beginTransaction()
-                .replace(
-                    R.id.media_play,
-                    mediaPlayerFragment,
-                    mediaPlayerFragment::class.simpleName
-                )
-                .commit()
+        mediaModel.complete.observe(this) {
+            initMediaPlayFragment()
         }
 
+        lifecycle.run {
+            val networkChangeReceiver = NetworkChangeReceiver(this@TvActivity, object :
+                ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    super.onAvailable(network)
+                    if (mediaModel.isFirstLoadError) {
+                        mediaModel.initSourceData()
+                    }
+                }
+            })
+            addObserver(networkChangeReceiver)
+        }
+    }
 
+    private fun initMediaPlayFragment() {
+        if (!mediaPlayerFragment.isAdded) {
+            lifecycleScope.launch {
+                val recentMediaItem = mediaModel.getRecentChannel()
+                if ((recentMediaItem != null)) {
+                    fragmentLoadMediaItem(recentMediaItem)
+                }
+                supportFragmentManager.beginTransaction()
+                    .replace(
+                        R.id.media_play,
+                        mediaPlayerFragment,
+                        mediaPlayerFragment::class.simpleName
+                    )
+                    .commit()
+            }
+        }
+    }
+
+    private fun fragmentLoadMediaItem(mediaItem: MediaItem) {
+        mediaPlayerFragment.setMediaItem(mediaItem)
+        mediaPlayerFragment.arguments = Bundle().apply {
+            putParcelable(PlayerActivity.RECENT_MEDIA, mediaItem)
+        }
     }
 
     private fun playMediaItem(mediaItem: MediaItem) {

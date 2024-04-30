@@ -1,5 +1,7 @@
 package com.wei.liuying.ui.mediaplayer
 
+import android.net.ConnectivityManager
+import android.net.Network
 import android.os.Bundle
 import android.transition.TransitionManager
 import android.view.LayoutInflater
@@ -13,7 +15,7 @@ import com.bumptech.glide.Glide
 import com.wei.liuying.MediaPlayHelper
 import com.wei.liuying.bean.MediaItem
 import com.wei.liuying.databinding.MediaPlayerBinding
-import com.wei.liuying.receiver.NetWorkStatusReceiver
+import com.wei.liuying.receiver.NetworkChangeReceiver
 import com.wei.liuying.utils.delayHideAnim
 import com.wei.liuying.utils.playAnim
 
@@ -44,12 +46,15 @@ class MediaPlayerFragment : Fragment() {
         }
         this.mediaPlayHelper = mediaPlayHelper
         lifecycle.run {
-            addObserver(mediaPlayHelper)
-            addObserver(NetWorkStatusReceiver { isConnected ->
-                if (isConnected) {
+            val networkChangeReceiver = NetworkChangeReceiver(requireContext(), object :
+                ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    super.onAvailable(network)
                     mediaPlayHelper.prepare()
                 }
             })
+            addObserver(mediaPlayHelper)
+            addObserver(networkChangeReceiver)
         }
 
     }

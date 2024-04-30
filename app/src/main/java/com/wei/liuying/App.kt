@@ -21,9 +21,8 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        CrashReport.initCrashReport(this, "f3d531896c", false);
+//        CrashReport.initCrashReport(this, "f3d531896c", false);
         instance = this
-        registerReceiver(NetworkChangeReceiver(), IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
         MMKVInit()
     }
 }

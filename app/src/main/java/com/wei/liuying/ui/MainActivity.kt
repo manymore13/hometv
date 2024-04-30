@@ -2,6 +2,8 @@ package com.wei.liuying.ui
 
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.Network
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.Menu
@@ -14,9 +16,9 @@ import androidx.lifecycle.lifecycleScope
 import com.wei.liuying.MediaViewModel
 import com.wei.liuying.R
 import com.wei.liuying.databinding.ActivityMainBinding
+import com.wei.liuying.receiver.NetworkChangeReceiver
 import com.wei.liuying.ui.medialist.MediaListFragment
 import com.wei.liuying.ui.setting.SettingActivity
-import com.wei.liuying.utils.EdgeToEdgeUtils
 import com.wei.liuying.utils.ThemeOverlayUtils
 import kotlinx.coroutines.launch
 
@@ -61,6 +63,19 @@ open class MainActivity : AppCompatActivity() {
             window.statusBarColor = actionBarColor
             setSupportActionBar(toolbar)
 //            EdgeToEdgeUtils.applyEdgeToEdge(window, true)
+        }
+
+        lifecycle.run {
+            val networkChangeReceiver = NetworkChangeReceiver(this@MainActivity, object :
+                ConnectivityManager.NetworkCallback() {
+                override fun onAvailable(network: Network) {
+                    super.onAvailable(network)
+                    if (mediaModel.isFirstLoadError) {
+                        mediaModel.initSourceData()
+                    }
+                }
+            })
+            addObserver(networkChangeReceiver)
         }
     }
 

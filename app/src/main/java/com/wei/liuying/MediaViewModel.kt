@@ -31,6 +31,7 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
     private var selectChannelJob: Job? = null
     private val sourceRepository = SourceRepository(application)
     private var currentItem = 0
+    var isFirstLoadError = false
 
     companion object {
         const val TAG = "MediaViewModel"
@@ -56,29 +57,37 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun initSourceData() = viewModelScope.launch {
-
+    init {
         LocalBroadcastManager.getInstance(App.getContext()).registerReceiver(
             broadcastReceiver,
             IntentFilter(ACTION_CHANGE_SOURCE)
         )
+    }
 
-        val selectedSourceId = AppConfig.getSelectedSourceId()
+    fun initSourceData() {
+        selectSourceJob?.cancel()
+        selectSourceJob = viewModelScope.launch {
 
-        var selectedSource: Source? =
-            sourceRepository.getSourceById(sourceId = selectedSourceId, true)
+            val selectedSourceId = AppConfig.getSelectedSourceId()
 
-        if (selectedSource == null) {
-            selectedSource = Source(name = DEFAULT_SOURCE_NAME, url = DEFAULT_SOURCE_URL)
-            Log.d(TAG, "加载默认source $DEFAULT_SOURCE_NAME")
-        }
-        try {
-            selectLoadSource(selectedSource)
-        } catch (e: Exception) {
-            toast(e.message)
-            e.printStackTrace()
+            var selectedSource: Source? =
+                sourceRepository.getSourceById(sourceId = selectedSourceId, true)
+
+            if (selectedSource == null) {
+                selectedSource = Source(name = DEFAULT_SOURCE_NAME, url = DEFAULT_SOURCE_URL)
+                Log.d(TAG, "加载默认source $DEFAULT_SOURCE_NAME")
+            }
+            try {
+                selectLoadSource(selectedSource)
+            } catch (e: Exception) {
+                isFirstLoadError = true
+                showLoading.postValue(false)
+                toast("数据加载失败：${e.message}")
+                e.printStackTrace()
+            }
         }
     }
+
 
     fun getAllSourceFlow(): Flow<MutableList<Source>> {
         return sourceRepository.getAllSourceFlow()
@@ -105,31 +114,27 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
     }
 
 
-    private fun selectLoadSource(source: Source) {
+    private suspend fun selectLoadSource(source: Source) {
+        showLoading.postValue(true)
 
-        selectSourceJob?.cancel()
-        selectSourceJob = viewModelScope.launch {
+        val updateTime = AppConfig.getSourceUpdateCycleTime()
+        val isNeedRefresh = isNeedRefreshData(source.refreshTime, updateTime)
+        val sourceId = sourceRepository.manageSourceRefresh(source, false)
+        isFirstLoadError = false
 
-            showLoading.postValue(true)
+        AppConfig.setSelectedSourceId(sourceId = sourceId)
+        Log.d(TAG, "isNeedRefresh = $isNeedRefresh loadChannels: $source")
 
-            val updateTime = AppConfig.getSourceUpdateCycleTime()
-            val isNeedRefresh = isNeedRefreshData(source.refreshTime, updateTime)
-            val sourceId = sourceRepository.manageSourceRefresh(source, false)
-
-            AppConfig.setSelectedSourceId(sourceId = sourceId)
-            Log.d(TAG, "isNeedRefresh = $isNeedRefresh loadChannels: $source")
-
-            sourceRepository.getAllChannelsFlow(sourceId).collect { channels ->
-                val mediaItems = channels.map {
-                    it.toMediaItem()
-                }
-
-                mediaItemList.clear()
-                mediaItemList.addAll(mediaItems)
-                updateCurrentItemIndex()
-                complete.postValue("complete")
-                showLoading.postValue(false)
+        sourceRepository.getAllChannelsFlow(sourceId).collect { channels ->
+            val mediaItems = channels.map {
+                it.toMediaItem()
             }
+
+            mediaItemList.clear()
+            mediaItemList.addAll(mediaItems)
+            updateCurrentItemIndex()
+            complete.postValue("complete")
+            showLoading.postValue(false)
         }
     }
 
@@ -143,14 +148,17 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun selectSource(id: Long) = viewModelScope.launch {
-        val source = sourceRepository.getSourceById(id)
-        if (source != null) {
-            try {
-                selectLoadSource(source)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                toast(e.message)
+    fun selectSource(id: Long) {
+        selectSourceJob?.cancel()
+        selectSourceJob = viewModelScope.launch {
+            val source = sourceRepository.getSourceById(id)
+            if (source != null) {
+                try {
+                    selectLoadSource(source)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    toast(e.message)
+                }
             }
         }
     }
@@ -177,10 +185,35 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
     suspend fun getRecentChannel(): MediaItem? {
         val channelName = AppConfig.getRecentChannelName()
         val channel = sourceRepository.getChannelByName(channelName)
+        if (channel == null) {
+            val mediaItem = getFirstMediaItem()?.apply {
+                mediaUrl = getUrl(id) ?: ""
+            }
+            if (mediaItem != null) {
+                return mediaItem
+            }
+        }
         return channel?.toMediaItem()?.apply {
             val url = getUrl(channel.id)
             if (url?.isNotEmpty() == true) {
                 mediaUrl = url
+            }
+        }
+    }
+
+    private suspend fun getFirstMediaItem(): MediaItem? {
+        if (mediaItemList.isNotEmpty()) {
+            return getMediaItemWithUrl(mediaItemList[0])
+        }
+        return null
+    }
+
+    suspend fun getMediaItemWithUrl(mediaItem: MediaItem): MediaItem {
+        val channelId = mediaItem.id
+        val mediaItemUrl = getUrl(channelId)
+        return mediaItem.apply {
+            if (mediaItemUrl != null) {
+                mediaUrl = mediaItemUrl
             }
         }
     }
@@ -201,7 +234,7 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    suspend fun getUrl(channelId: Long): String? {
+    private suspend fun getUrl(channelId: Long): String? {
         val channelUrls = sourceRepository.getChannelUrlByChannelId(channelId)
         return if (channelUrls.isNotEmpty()) {
             channelUrls[0].url

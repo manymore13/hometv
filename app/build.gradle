@@ -14,7 +14,7 @@ android {
         targetSdk 33
         versionCode 3
         versionName "1.0"
-
+        archivesBaseName = "liuying$versionName.$versionCode"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
             useSupportLibrary true
