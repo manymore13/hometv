@@ -10,16 +10,17 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.wei.source.db.Source
 import com.wei.liuying.bean.MediaItem
 import com.wei.liuying.bean.toMediaItem
 import com.wei.liuying.utils.AppConfig
 import com.wei.liuying.utils.isNeedRefreshData
 import com.wei.liuying.utils.toast
 import com.wei.source.SourceRepository
+import com.wei.source.db.Source
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kotlin.coroutines.cancellation.CancellationException
 
 class MediaViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -80,6 +81,9 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
             try {
                 selectLoadSource(selectedSource)
             } catch (e: Exception) {
+                if (e is CancellationException) {
+                    return@launch
+                }
                 isFirstLoadError = true
                 showLoading.postValue(false)
                 toast("数据加载失败：${e.message}")
@@ -125,17 +129,18 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
         AppConfig.setSelectedSourceId(sourceId = sourceId)
         Log.d(TAG, "isNeedRefresh = $isNeedRefresh loadChannels: $source")
 
-        sourceRepository.getAllChannelsFlow(sourceId).collect { channels ->
-            val mediaItems = channels.map {
-                it.toMediaItem()
-            }
+        sourceRepository.getAllChannelsFlow(sourceId)
+            .collect { channels ->
+                val mediaItems = channels.map {
+                    it.toMediaItem()
+                }
 
-            mediaItemList.clear()
-            mediaItemList.addAll(mediaItems)
-            updateCurrentItemIndex()
-            complete.postValue("complete")
-            showLoading.postValue(false)
-        }
+                mediaItemList.clear()
+                mediaItemList.addAll(mediaItems)
+                updateCurrentItemIndex()
+                complete.postValue("complete")
+                showLoading.postValue(false)
+            }
     }
 
     private fun updateCurrentItemIndex() {

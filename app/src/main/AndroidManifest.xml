@@ -84,13 +84,6 @@
                 <action android:name="android.media.browse.MediaBrowserService" />
             </intent-filter>
         </service>
-        <receiver
-            android:name=".receiver.NetworkChangeReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
     </application>
 
 </manifest>

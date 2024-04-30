@@ -10,4 +10,6 @@
     <dimen name="splash_icon_size">200dp</dimen>
     <dimen name="splash_text_size">38sp</dimen>
 
+    <dimen name="list_item_icon_size">80dp</dimen>
+
 </resources>
