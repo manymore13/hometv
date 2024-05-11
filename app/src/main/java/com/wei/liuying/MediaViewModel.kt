@@ -66,7 +66,9 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun initSourceData() {
-        selectSourceJob?.cancel()
+        if (selectSourceJob?.isCancelled == false) {
+            selectSourceJob?.cancel()
+        }
         selectSourceJob = viewModelScope.launch {
 
             val selectedSourceId = AppConfig.getSelectedSourceId()
@@ -80,10 +82,9 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
             }
             try {
                 selectLoadSource(selectedSource)
+            } catch (e: CancellationException) {
+                e.printStackTrace()
             } catch (e: Exception) {
-                if (e is CancellationException) {
-                    return@launch
-                }
                 isFirstLoadError = true
                 showLoading.postValue(false)
                 toast("数据加载失败：${e.message}")
@@ -154,12 +155,16 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun selectSource(id: Long) {
-        selectSourceJob?.cancel()
+        if (selectSourceJob?.isCancelled == false) {
+            selectSourceJob?.cancel()
+        }
         selectSourceJob = viewModelScope.launch {
             val source = sourceRepository.getSourceById(id)
             if (source != null) {
                 try {
                     selectLoadSource(source)
+                } catch (e: CancellationException) {
+                    e.printStackTrace()
                 } catch (e: Exception) {
                     e.printStackTrace()
                     toast(e.message)
@@ -224,7 +229,9 @@ class MediaViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun selectChannel(position: Int) {
-        selectChannelJob?.cancel()
+        if (selectChannelJob?.isCancelled == false) {
+            selectChannelJob?.cancel()
+        }
         selectChannelJob = viewModelScope.launch {
             if (checkPosition(position)) {
                 val curMedia = mediaItemList[position]
