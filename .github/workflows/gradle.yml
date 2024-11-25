@@ -30,7 +30,11 @@ jobs:
         key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
         restore-keys: |
           ${{ runner.os }}-gradle-
-
+          
+    # 赋予 gradlew 文件执行权限
+    - name: Grant execute permission for Gradlew
+      run: chmod +x ./gradlew
+      
     # 构建 APK
     - name: Build APK
       run: ./gradlew assembleRelease
