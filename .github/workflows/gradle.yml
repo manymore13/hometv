@@ -1,26 +1,47 @@
-name: Build & Publish Release APK
+name: Build and Release APK
 
 on:
   push:
     tags:
-      - '*'
+      - 'v*' # 仅在推送匹配 v* 的标签时触发
+  workflow_dispatch: # 允许手动触发
 
 jobs:
-  Gradle:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-    - name: checkout code
-      uses: actions/checkout@v2
-    - name: setup jdk
-      uses: actions/setup-java@v1
+    # 检出代码
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # 设置 JDK 环境
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
       with:
-        java-version: 17
-    - name: Make Gradle executable
-      run: chmod +x ./gradlew
-    - name: Build Release APK
+        java-version: '17'
+        distribution: 'temurin'
+
+    # 缓存 Gradle 构建文件以加速
+    - name: Cache Gradle packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.gradle/caches
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
+
+    # 构建 APK
+    - name: Build APK
       run: ./gradlew assembleRelease
-    - name: Upload APK Release - ${{ env.repository_name }}
-      uses: actions/upload-artifact@v3
+
+    # 上传 APK 到 GitHub Release
+    - name: Upload APK to Release
+      uses: ncipollo/release-action@v1
       with:
-        name: ${{ env.date_today }} - ${{ env.playstore_name }} - ${{ env.repository_name }} - APK(s) release generated
-        path: ${{ env.main_project_module }}/build/outputs/apk/release/
+        artifacts: app/build/outputs/apk/release/app-release.apk # 替换为你的APK路径
+        token: ${{ secrets.GITHUB_TOKEN }}
+        tag: ${{ github.ref_name }}
+        name: Release ${{ github.ref_name }}
+        body: |
+          自动生成的 Release 版本。
