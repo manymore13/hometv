@@ -24,9 +24,19 @@ android {
             abiFilters 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
         }
     }
+    
+    signingConfigs {
+        release {
+            storeFile file("../k/hometv.jks")
+            storePassword System.getenv("KEYSTORE_PASSWORD")
+            keyAlias System.getenv("KEY_ALIAS")
+            keyPassword System.getenv("KEY_PASSWORD")
+        }
+    }
 
     buildTypes {
         release {
+            signingConfig signingConfigs.release
             shrinkResources true
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
