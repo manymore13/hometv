@@ -32,8 +32,8 @@ jobs:
         
     - name: Run Python script
       run: |
-        pwd
-        python ./k/en.py     
+        cd ./k
+        python en.py     
 
     # 设置 JDK 环境
     - name: Set up JDK 17
