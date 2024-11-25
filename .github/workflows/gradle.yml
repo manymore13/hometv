@@ -33,7 +33,7 @@ jobs:
     - name: Run Python script
       run: |
         pwd
-        python hometv/k/en.py     
+        python ./k/en.py     
 
     # 设置 JDK 环境
     - name: Set up JDK 17
