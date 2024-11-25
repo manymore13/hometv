@@ -14,9 +14,26 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Set temporary environment variable
+      run: |
+        export KEYSTORE_PASSWORD=${{ secrets.KEYSTORE_PASSWORD }}
+        export KEY_PASSWORD=${{ secrets.KEY_PASSWORD }}
+        export KEY_ALIAS=${{ secrets.KEY_ALIAS }}
+    
     # 检出代码
     - name: Checkout code
       uses: actions/checkout@v3
+      
+    # 设置 Python 环境并运行脚本
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'  
+        
+    - name: Run Python script
+      run: |
+        pwd
+        python hometv/k/en.py     
 
     # 设置 JDK 环境
     - name: Set up JDK 17
