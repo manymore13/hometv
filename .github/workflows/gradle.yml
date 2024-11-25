@@ -43,7 +43,7 @@ jobs:
     - name: Upload APK to Release
       uses: ncipollo/release-action@v1
       with:
-        artifacts: app/build/outputs/apk/release/app-release.apk # 替换为你的APK路径
+        artifacts: app/build/outputs/apk/release/*.apk # 替换为你的APK路径
         token: ${{ secrets.GITHUB_TOKEN }}
         tag: ${{ github.ref_name }}
         name: Release ${{ github.ref_name }}
