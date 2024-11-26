@@ -1,5 +1,5 @@
 # hometv
->一款支持在手机或者电视上观看视频直播，收听FM的Android App，支持从外部导入数据源
+>一款Android App，支持在手机或者电视上收看节目，支持第三方数据源导入  
 [下载安装](https://github.com/manymore13/hometv/releases/tag/main)
 
 # 功能
